@@ -4717,8 +4717,8 @@
               const startTooltip = L.tooltip({
                 className: "route-extra-label",
                 permanent: true,
-                direction: "bottom",
-                offset: [0, 10],
+                direction: "top",
+                offset: [0, -20],
               })
                 .setLatLng(startCoord)
                 .setContent(`CFL: ${CFL_XFL[routeKey].CFL || ""}`)
@@ -4730,7 +4730,7 @@
               className: "route-extra-label",
               permanent: true,
               direction: "top",
-              offset: [0, -10],
+              offset: [0, -20],
             })
               .setLatLng(lastCoord)
               .setContent(`XFL: ${CFL_XFL[routeKey].XFL || ""}`)
