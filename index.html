@@ -26,7 +26,7 @@
         #map {
           height: 100vh;
           width: 100vw;
-          background-color: #374b57; //screen backgroud
+          background-color: #304652; //#374b57; //screen backgroud
         }
 
         /* fixes name labels styling*/
@@ -37,7 +37,7 @@
           padding: 0 !important;
           margin: 0 !important;
           color: white;
-          font-size: 9px;
+          font-size: 10px;
           font-family: "Roboto", calibri-light;
           font-weight: light; /* Thinner font */
           text-align: center;
@@ -63,7 +63,7 @@
           line-height: 1;
         }
 
-        /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FB9B9B"; -----------------*/
+        /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FF9B9B"; -----------------*/
           .map-menu-bar {
             position: fixed;
             top: 0px;
@@ -73,26 +73,26 @@
             display: flex;
             gap: 3px;
             padding: 3px;
-            background: rgba(105, 126, 129, 0.7);
+            background: rgba(75, 89, 97, 0.9);
           }
 
           /* ------menu button styling (flat look)----- */
           .map-btn {
             padding: 6px 10px;
             font-size: 12px;
-            color: #FB9B9B;
+            color: #FF9B9B;
             cursor: pointer;
             height: 28px;
             width: 97px;
             min-width: 65px;
             //background: transparent; /* Remove background */
-            background: rgba(80, 100, 105, 0.9);
-            border: 0.5px solid grey;
-            //border: none; /* Remove border */
+            background: rgba(75, 89, 97, 0.5);
+            //border: 0.5px solid grey;
+            border: none; /* Remove border */
             border-radius: 14px; /* Remove individual rounding */
           }
           .map-btn:hover {
-            background: #405458;
+            background: rgba(90, 104, 112, 0.7);
           }
           #toggleRouteTipsBtn {
             width: 110px;
@@ -129,7 +129,7 @@
           display: block;
           margin: 2px 0;
         }
-        /* Show checkboxes when Areas and Sectors button is active */
+        /* Show checkboxes when Areas or Sectors button is active */
         #areasPanel.active .areas-checkboxes,
         #sectorPanel.active .sector-checkboxes {
           display: block;
@@ -143,12 +143,17 @@
         }
 
         /* -------Custom sector-checkboxes style-------- */
+        #sectorHeader{
+          width: 100px;
+          height: 26px;
+        }
+
         .sector-checkboxes {
           display: none;
           position: absolute;
-          top: 118%;
-          right: 5px;
-          width: 75px;
+          top: 113%;
+          right: 1px;
+          width: 85px;
           background: rgba(45, 59, 71, 0.8);
           color: #d3d3d3;
           padding: 6px;
@@ -184,9 +189,9 @@
         /*-------------------route pair area styling--------------------*/
         #routePanel {
           position: absolute;
-          top: 34px;
+          top: 36px;
           left: 3px;
-          background: rgba(35, 49, 57, 0.6);
+          background: rgba(35, 49, 57, 0.7);
           //border: 1px solid #ccc; //#999;
           border-radius: 8px;
           padding: 8px;
@@ -194,11 +199,10 @@
           max-height: 92%;
           overflow: hidden;
           //overflow-y: auto;
-          z-index: 1000;
-          color: white;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
           display: flex;
           flex-direction: column;
+          z-index: 1000;
         }
         #routeList {
           overflow-y: auto;
@@ -253,7 +257,8 @@
           background: rgba(0, 0, 0, 0.15);
           border-bottom: 1px solid #888;
         }
-
+ 
+        /*--Arr,Dep,Ovf bnuttons ---------------*/
         .filter-btn {
           flex: 1;
           padding: 4px;
@@ -407,7 +412,9 @@
         .arrow-head {
           width: 3px;
           height: 3px;
-          background: url('data:image/svg+xml;utf8,<svg fill="yellow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg>')
+          background: url('data:image/svg+xml;utf8,<
+            svg fill="yellow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+            ><circle cx="75" cy="60" r="30"/></svg>')
             no-repeat center;
           background-size: contain;
           transform-origin: center;
@@ -418,9 +425,8 @@
     <!-- Menu bar for buttons -->
     <div id="map"></div>
     <div id="mapMenuBar" class="map-menu-bar">
-      <button id="resetViewBtn" class="map-btn">Clear</button>
+      <button id="resetViewBtn" class="map-btn">RTE Clear</button>
       <button id="toggleMapBtn" class="map-btn">Toggle Map</button>
-      <!--button id="toggleTableBtn" class="map-btn">Sector Info ▸</button-->
       <button id="toggleWaypointsBtn" class="map-btn">Names: ON</button>
       <button id="toggleRunwaysBtn" class="map-btn">RWYs: ON</button>
       <button id="toggleRouteTipsBtn" class="map-btn">RTE Info: OFF</button>
@@ -484,7 +490,6 @@
     </div>
 
     <!--route filter buttons -->
-
     <div id="routePanel">
       <div id="routeFilters">
         <button onclick="filterRoutes('Arr')" class="filter-btn selected">
@@ -562,6 +567,7 @@
       />
       <span id="zoomValue">7.0</span>
     </div>
+
     <script>
       function convertDMSToDecimal(dmsStr) {
         const match = dmsStr.match(
@@ -578,13 +584,8 @@
         return [convertDMSToDecimal(latDMS), convertDMSToDecimal(lonDMS)];
       }
 
-      // Function to update details panel
-      //function normalize(str = "") {
-      //return str.trim().replace(/\n/g, "<br>");
-      //}
-
-      //------------toggle map layer online----------------------------------------------------------------
-      /*
+    //------------toggle map layer online----------------------------------------------------------------
+/*
     const baseMapLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
       {
@@ -651,195 +652,78 @@
 
       //10nm final extended lines ------------
       const runwayCoords = {
-        OMAA_31L: [
-          ["242518N", "0544001E"],
-          ["241909N", "0544841E"],
-        ],
-        OMAA_31R: [
-          ["242632N", "0544012E"],
-          ["242024N", "0544852E"],
-        ],
-        OMAA_13L: [
-          ["242754N", "0543817E"],
-          ["243403N", "0542938E"],
-        ],
-        OMAA_13R: [
-          ["242639N", "0543806E"],
-          ["243248N", "0542927E"],
-        ],
+        OMAA_31L: [["242518N", "0544001E"], ["241909N", "0544841E"],],
+        OMAA_31R: [["242632N", "0544012E"], ["242024N", "0544852E"],],
+        OMAA_13L: [["242754N", "0543817E"], ["243403N", "0542938E"],],
+        OMAA_13R: [["242639N", "0543806E"], ["243248N", "0542927E"],],
 
-        OMAD_31: [
-          ["242510N", "0542814E"],
-          ["241900N", "0543651E"],
-        ],
-        OMAD_13: [
-          ["242614N", "0542644E"],
-          ["243225N", "0541806E"],
-        ],
+        OMAD_31: [["242510N", "0542814E"], ["241900N", "0543651E"],],
+        OMAD_13: [["242614N", "0542644E"], ["243225N", "0541806E"],],
 
-        OMAL_19: [
-          ["241647N", "0553642E"],
-          ["242641N", "0553807E"],
-        ],
-        OMAL_01: [
-          ["241438N", "0553624E"],
-          ["240443N", "0553459E"],
-        ],
+        OMAL_19: [["241647N", "0553642E"], ["242641N", "0553807E"],],
+        OMAL_01: [["241438N", "0553624E"], ["240443N", "0553459E"],],
 
         //"OMAM_13L": [["241530N", "0543200E"], ["242132N", "0542315E"]],
         //"OMAM_13R": [["241427N", "0543212E"], ["242029N", "0542327E"]],
         //"OMAM_31L": [["241315N", "0543355E"], ["240714N", "0544240E"]],
         //"OMAM_31R": [["241418N", "0543343E"], ["240816N", "0544227E"]],
 
-        OMBY_13: [
-          ["241729N", "0523416E"],
-          ["242414N", "0522611E"],
-        ],
-        OMBY_31: [
-          ["241633.46N", "0523522.45E"],
-          ["240948N", "0524327E"],
-        ],
+        OMBY_13: [["241729N", "0523416E"], ["242414N", "0522611E"],],
+        OMBY_31: [["241633.46N", "0523522.45E"], ["240948N", "0524327E"],],
 
-        OMAS_31: [
-          ["250802.32N", "0525247.65E"],
-          ["250131N", "0530110E"],
-        ],
-        OMAS_13: [
-          ["250834N", "0525207E"],
-          ["251504N", "0524344E"],
-        ],
+        OMAS_31: [["250802.32N", "0525247.65E"], ["250131N", "0530110E"],],
+        OMAS_13: [["250834N", "0525207E"], ["251504N", "0524344E"],],
 
-        OMDB_12L: [
-          ["251600N", "0552047E"],
-          ["252113N", "0551122E"],
-        ],
-        OMDB_12R: [
-          ["251522N", "0552129E"],
-          ["252035N", "0551204E"],
-        ],
-        OMDB_30L: [
-          ["251407N", "0552345E"],
-          ["250853N", "0553310E"],
-        ],
-        OMDB_30R: [
-          ["251446N", "0552300E"],
-          ["250933N", "0553225E"],
-        ],
+        OMDB_12L: [["251600N", "0552047E"], ["252113N", "0551122E"],],
+        OMDB_12R: [["251522N", "0552129E"], ["252035N", "0551204E"],],
+        OMDB_30L: [["251407N", "0552345E"], ["250853N", "0553310E"],],
+        OMDB_30R: [["251446N", "0552300E"], ["250933N", "0553225E"],],
 
-        OMDW_30: [
-          ["245310N", "0551049E"],
-          ["244757N", "0552012E"],
-        ],
-        OMDW_12: [
-          ["245426N", "0550831E"],
-          ["245938N", "0545907E"],
-        ],
+        OMDW_30: [["245310N", "0551049E"], ["244757N", "0552012E"],],
+        OMDW_12: [["245426N", "0550831E"], ["245938N", "0545907E"],],
         //"OMDW_31": [["245143N", "0551005E"], ["244631N", "0551929E"]], //1838m
         //"OMDW_13": [["245214N", "0550909E"], ["245726N", "0545944E"]], //1838m
 
-        OMSJ_30: [
-          ["251914N", "0553208E"],
-          ["251352N", "0554127E"],
-        ],
-        OMSJ_12: [
-          ["252025N", "0553006E"],
-          ["252547N", "0552046E"],
-        ],
+        OMSJ_30: [["251914N", "0553208E"], ["251352N", "0554127E"],],
+        OMSJ_12: [["252025N", "0553006E"], ["252547N", "0552046E"],],
 
-        OMRK_16: [
-          ["253747N", "0555602E"],
-          ["254726N", "0555308E"],
-        ],
-        OMRK_34: [
-          ["253549N", "0555638E"],
-          ["252610N", "0555931E"],
-        ],
+        OMRK_16: [["253747N", "0555602E"], ["254726N", "0555308E"],],
+        OMRK_34: [["253549N", "0555638E"], ["252610N", "0555931E"],],
 
-        OMFJ_11: [
-          ["250707N", "0561825E"],
-          ["251056N", "0560813E"],
-        ],
-        OMFJ_29: [
-          ["250620N", "0562029E"],
-          ["250230N", "0563040E"],
-        ],
+        OMFJ_11: [["250707N", "0561825E"], ["251056N", "0560813E"],],
+        OMFJ_29: [["250620N", "0562029E"], ["250230N", "0563040E"],],
         //"OMFJ_11R" :[["250652N", "0561845E"], ["251041N", "0560834E"]],
         //"OMFJ_29L" :[["250614N", "0562026E"], ["250224N", "0563037E"]],
 
-        SIR_12: [
-          ["255458N", "0543145E"],
-          ["260054N", "0542248E"],
-        ],
-        SIR_30: [
-          ["255411N", "0543258E"],
-          ["254815N", "0544154E"],
-        ],
+        SIR_12: [["255458N", "0543145E"], ["260054N", "0542248E"],],
+        SIR_30: [["255411N", "0543258E"], ["254815N", "0544154E"],],
 
-        KIS_27R: [
-          ["263136N", "0535957E"],
-          ["263045N", "0541105E"],
-        ],
-        KIS_09L: [
-          ["263146N", "0535746E"],
-          ["263237N", "0534638E"],
-        ],
+        KIS_27R: [["263136N", "0535957E"], ["263045N", "0541105E"],],
+        KIS_09L: [["263146N", "0535746E"], ["263237N", "0534638E"],],
         //"KIS_27L": [["263126N", "0535957E"], ["263035N", "0541104E"]],
         //"KIS_09R": [["263136N", "0535745E"], ["263227N", "0534637E"]],
 
-        MCT_08R: [
-          ["233531N", "0581618E"],
-          ["233439N", "0580526E"],
-        ],
-        MCT_26L: [
-          ["233542N", "0581824E"],
-          ["233633N", "0582916E"],
-        ],
+        MCT_08R: [["233531N", "0581618E"], ["233439N", "0580526E"],],
+        MCT_26L: [["233542N", "0581824E"], ["233633N", "0582916E"],],
         //"MCT_08L": [["233621N", "0581529E"], ["233528N", "0580437E"]],
         //"MCT_26R": [["233632N", "0581744E"], ["233724N", "0582836E"]],
 
-        OOSH_15: [
-          ["242409N", "0563702E"],
-          ["243312N", "0563223E"],
-        ],
-        OOSH_33: [
-          ["242211N", "0563802E"],
-          ["241308N", "0564241E"],
-        ],
+        OOSH_15: [["242409N", "0563702E"], ["243312N", "0563223E"],],
+        OOSH_33: [["242211N", "0563802E"], ["241308N", "0564241E"],],
 
-        BND_12L: [
-          ["271357N", "0562315E"],
-          ["272248N", "0562828E"],
-        ],
-        BNE_03R: [
-          ["271211N", "0562213E"],
-          ["270320N", "0561701E"],
-        ],
+        BND_12L: [["271357N", "0562315E"], ["272248N", "0562828E"],],
+        BNE_03R: [["271211N", "0562213E"], ["270320N", "0561701E"],],
 
-        QSM_23: [
-          ["264601N", "0555507E"],
-          ["265232N", "0560337E"],
-        ],
-        QSM_05: [
-          ["264432N", "0555310E"],
-          ["263802N", "0554441E"],
-        ],
+        QSM_23: [["264601N", "0555507E"], ["265232N", "0560337E"],],
+        QSM_05: [["264432N", "0555310E"], ["263802N", "0554441E"],],
 
-        DOH_16L: [
-          ["251746N", "0513632E"],
-          ["252703N", "0513226E"],
-        ],
-        DOH_34R: [
-          ["251520N", "0513736E"],
-          ["250603N", "0514142E"],
-        ],
-        DOH_16R: [
-          ["251728N", "0513523E"],
-          ["252645N", "0513118E"],
-        ],
-        DOH_34L: [
-          ["251519N", "0513619E"],
-          ["250602N", "0514024E"],
-        ],
+        DOH_16L: [["251746N", "0513632E"], ["252703N", "0513226E"],],
+        DOH_34R: [["251520N", "0513736E"], ["250603N", "0514142E"],],
+        DOH_16R: [["251728N", "0513523E"], ["252645N", "0513118E"],],
+        DOH_34L: [["251519N", "0513619E"], ["250602N", "0514024E"],],
+
+        BAH_12L: [["261644N", "0503710E"], ["262209N", "0502748E"],],
+        BAH_30R: [["261546N", "0503852E"], ["261021N", "0504814E"],],
       };
 
       //sector coordinates
@@ -1045,9 +929,6 @@
         ["250811.8360N", "0555918.3100E"],
         ["251050.5564N", "0560704.8139E"],
         ["251546.8257N", "0560815.8996E"],
-        //["250810.0000N", "0563002.0000E"],
-        //["251546.8257N", "0560815.8996E"],
-        //["251050.5564N", "0560704.8139E"],
         ["250810.0000N", "0563002.0000E"],
       ];
       const romeoCoords = [
@@ -3902,8 +3783,9 @@
           fillOpacity: 1,
         })
           .bindTooltip(
-            `<b>${pointName}</b> - (${turn})<br>Inbound: ${inboundHeadingDeg}°<br>Outbound: ${outboundHeadingDeg}°<br>
-     Limit: ${limit || "N/A"}`,
+            `<b>${pointName}</b> - (${turn})<br>Inbound: ${
+             inboundHeadingDeg}°<br>Outbound: ${outboundHeadingDeg}°<br>
+             Limit: ${limit || "N/A"}`,
             {
               permanent: true,
               direction: "top",
@@ -4026,7 +3908,7 @@
           if (isVisible) {
             map.removeLayer(layer);
             button.textContent = "RWYs: OFF";
-            button.style.color = "#FB9B9B";
+            button.style.color = "#FF9B9B";
           } else {
             map.addLayer(layer);
             button.textContent = "RWYs: ON";
@@ -4113,7 +3995,8 @@
                 )
               ) {
                 console.error(
-                  `Invalid coords for polygon area "${area.shapeName}": must be an array of at least 3 [latDMS, lonDMS] arrays`,
+                  `Invalid coords for polygon area "${
+                    area.shapeName}": must be an array of at least 3 [latDMS, lonDMS] arrays`,
                   area
                 );
                 return;
@@ -4135,7 +4018,8 @@
                 area.corner2.length !== 2
               ) {
                 console.error(
-                  `Invalid corner1 or corner2 for rectangle area "${area.shapeName}": each must be an array [latDMS, lonDMS]`,
+                  `Invalid corner1 or corner2 for rectangle area "${
+                   area.shapeName}": each must be an array [latDMS, lonDMS]`,
                   area
                 );
                 return;
@@ -4244,10 +4128,10 @@
       const sectorTablePanel = document.getElementById("sectorTablePanel");
 
       // Configurable offset for panel position (px)
-      const sectorPanelOffset = { x: -115, y: 5 };
+      const sectorPanelOffset = { x: -118, y: 5 };
       // Change these values to move panel around (e.g., {x:20, y:10})
 
-      toggleTableBtn.addEventListener("click", () => {
+      toggleTableBtn.addEventListener("click", function() {
         if (
           sectorTablePanel.style.display === "none" ||
           sectorTablePanel.style.display === ""
@@ -4260,8 +4144,10 @@
             rect.bottom + window.scrollY + sectorPanelOffset.y + "px";
 
           sectorTablePanel.style.display = "block";
+          this.textContent = "Sector Info ▼"; 
         } else {
           sectorTablePanel.style.display = "none";
+          this.textContent = "Sector Info ▸";
         }
       });
 
@@ -4317,7 +4203,7 @@
       // Enable drag on sectorTablePanel
       makeDraggable(document.getElementById("sectorTablePanel"));
 
-      let coordLabelColor = "white";
+      let coordLabelColor = "#C5C5C5";
       let coordsVisible = true;
 
       Object.entries(extraPoints).forEach(([name, [latDMS, lonDMS]]) => {
@@ -4446,7 +4332,7 @@
           routeTooltips.forEach((tooltip) => (tooltip.style.display = "none"));
           if (remarksOverlay) remarksOverlay.style.display = "none";
           button.textContent = "RTE Info: OFF";
-          button.style.color = "#FB9B9B"; // Text color for OFF state
+          button.style.color = "#FF9B9B"; // Text color for OFF state
         }
       }
 
@@ -5060,7 +4946,7 @@
           .addEventListener("click", function () {
             if (mapLayerVisible) {
               map.removeLayer(baseMapLayer);
-              coordLabelColor = "white";
+              coordLabelColor = "#C5C5C5";
               runwayLayers.forEach((layer) =>
                 layer.setStyle({ color: "#00ADD6" })
               ); //rwy color
@@ -5130,7 +5016,7 @@
             });
 
             this.textContent = coordsVisible ? "Names: ON" : "Names: OFF";
-            this.style.color = coordsVisible ? "#B4F59D" : "#FB9B9B"; // Changes text color
+            this.style.color = coordsVisible ? "#B4F59D" : "#FF9B9B"; // Changes text color
           });
 
         // High group toggle-------------------
