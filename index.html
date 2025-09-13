@@ -71,9 +71,9 @@
             right: 0px;
             z-index: 3000;
             display: flex;
-            gap: 5px;
+            gap: 3px;
             padding: 3px;
-            background: rgba(125, 146, 149, 0.35);
+            background: rgba(105, 126, 129, 0.7);
           }
 
           /* ------menu button styling (flat look)----- */
@@ -172,14 +172,14 @@
           margin-left: auto;
         }
 
-#sectorTablePanel {
-  position: absolute;
-  background: rgba(35, 49, 57, 0.6);
-  border: 1px solid #666;
-  padding: 4px;
-  cursor: move; /* draggable look */
-  z-index: 1000;
-}
+        #sectorTablePanel {
+          position: absolute;
+          background: rgba(45, 59, 71, 0.8);
+          //border: 1px solid #666;
+          //padding: 8px;
+          cursor: move; /* draggable look */
+          z-index: 1000;
+        }
 
         /*-------------------route pair area styling--------------------*/
         #routePanel {
@@ -501,26 +501,38 @@
     <div
       id="sectorTablePanel"
       style="
-
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         font-size: 11px;
         font-family: sans-serif;
         z-index: 1500;
         display: none;
       "
-      <div id="sectorTablePanel" style="display: none;">
-        <table id="sectorTable" border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; background: rgba(35, 49, 57); color: white">
-          <thead>
-            <tr>
-              <th>Sectors</th>
-              <th>Limit</th>
-              <th>Freq</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      <div
+      id="sectorTablePanel"
+      style="display: none"
+    >
+      <table
+        id="sectorTable"
+        border="1"
+        cellpadding="6"
+        cellspacing="0"
+        style="
+          border-collapse: collapse;
+          background: rgba(45, 64, 76, 0.8);
+          color: white;
+        "
+      >
+        <thead>
+          <tr>
+            <th>Sectors</th>
+            <th>Limit</th>
+            <th>Freq</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
     <!-- zoonslider at the bottom of the screen styling-->
     <div
@@ -4228,105 +4240,83 @@
       renderSectorTable();
 
       // --- Table toggle logic ---
-const toggleTableBtn = document.getElementById("toggleTableBtn");
-const sectorTablePanel = document.getElementById("sectorTablePanel");
+      const toggleTableBtn = document.getElementById("toggleTableBtn");
+      const sectorTablePanel = document.getElementById("sectorTablePanel");
 
-// 🔧 Configurable offset for panel position (px)
-const sectorPanelOffset = { x: -110, y: 5 };  
-// Change these values to move panel around (e.g., {x:20, y:10})
+      // Configurable offset for panel position (px)
+      const sectorPanelOffset = { x: -115, y: 5 };
+      // Change these values to move panel around (e.g., {x:20, y:10})
 
-toggleTableBtn.addEventListener("click", () => {
-  if (sectorTablePanel.style.display === "none" || sectorTablePanel.style.display === "") {
-    // Position relative to button with custom offset
-    const rect = toggleTableBtn.getBoundingClientRect();
-    sectorTablePanel.style.position = "absolute";
-    sectorTablePanel.style.left = rect.left + sectorPanelOffset.x + "px";
-    sectorTablePanel.style.top = rect.bottom + window.scrollY + sectorPanelOffset.y + "px";
+      toggleTableBtn.addEventListener("click", () => {
+        if (
+          sectorTablePanel.style.display === "none" ||
+          sectorTablePanel.style.display === ""
+        ) {
+          // Position relative to button with custom offset
+          const rect = toggleTableBtn.getBoundingClientRect();
+          sectorTablePanel.style.position = "absolute";
+          sectorTablePanel.style.left = rect.left + sectorPanelOffset.x + "px";
+          sectorTablePanel.style.top =
+            rect.bottom + window.scrollY + sectorPanelOffset.y + "px";
 
-    sectorTablePanel.style.display = "block";
-  } else {
-    sectorTablePanel.style.display = "none";
-  }
-});
+          sectorTablePanel.style.display = "block";
+        } else {
+          sectorTablePanel.style.display = "none";
+        }
+      });
 
-// --- Make sector Info table (mouse + touch drag) -------------------------------------
-function makeDraggable(element) {
-  let offsetX = 0, offsetY = 0, isDragging = false;
+      // --- Make sector Info table (mouse + touch drag) -------------------------------------
+      function makeDraggable(element) {
+        let offsetX = 0,
+          offsetY = 0,
+          isDragging = false;
 
-  function startDrag(e) {
-    isDragging = true;
+        function startDrag(e) {
+          isDragging = true;
 
-    if (e.type === "mousedown") {
-      offsetX = e.clientX - element.offsetLeft;
-      offsetY = e.clientY - element.offsetTop;
-      document.addEventListener("mousemove", onDrag);
-      document.addEventListener("mouseup", stopDrag);
-    } else if (e.type === "touchstart") {
-      const touch = e.touches[0];
-      offsetX = touch.clientX - element.offsetLeft;
-      offsetY = touch.clientY - element.offsetTop;
-      document.addEventListener("touchmove", onDrag);
-      document.addEventListener("touchend", stopDrag);
-    }
-  }
-
-  function onDrag(e) {
-    if (!isDragging) return;
-
-    if (e.type === "mousemove") {
-      element.style.left = e.clientX - offsetX + "px";
-      element.style.top = e.clientY - offsetY + "px";
-    } else if (e.type === "touchmove") {
-      const touch = e.touches[0];
-      element.style.left = touch.clientX - offsetX + "px";
-      element.style.top = touch.clientY - offsetY + "px";
-    }
-    element.style.bottom = "auto"; // prevent snapping back
-  }
-
-  function stopDrag() {
-    isDragging = false;
-    document.removeEventListener("mousemove", onDrag);
-    document.removeEventListener("mouseup", stopDrag);
-    document.removeEventListener("touchmove", onDrag);
-    document.removeEventListener("touchend", stopDrag);
-  }
-
-  element.addEventListener("mousedown", startDrag);
-  element.addEventListener("touchstart", startDrag);
-}
-
-// Enable drag on sectorTablePanel
-makeDraggable(document.getElementById("sectorTablePanel"));
-
-/*
-      // --- Make sector Info table -------------------------------------
-      function makeDraggable(el) {
-        let offsetX,
-          offsetY,
-          isDown = false;
-
-        el.addEventListener("mousedown", (e) => {
-          isDown = true;
-          offsetX = el.offsetLeft - e.clientX;
-          offsetY = el.offsetTop - e.clientY;
-        });
-
-        document.addEventListener("mouseup", () => (isDown = false));
-
-        document.addEventListener("mousemove", (e) => {
-          if (isDown) {
-            el.style.left = e.clientX + offsetX + "px";
-            el.style.top = e.clientY + offsetY + "px";
-            el.style.bottom = "auto"; // prevent snapping back
+          if (e.type === "mousedown") {
+            offsetX = e.clientX - element.offsetLeft;
+            offsetY = e.clientY - element.offsetTop;
+            document.addEventListener("mousemove", onDrag);
+            document.addEventListener("mouseup", stopDrag);
+          } else if (e.type === "touchstart") {
+            const touch = e.touches[0];
+            offsetX = touch.clientX - element.offsetLeft;
+            offsetY = touch.clientY - element.offsetTop;
+            document.addEventListener("touchmove", onDrag);
+            document.addEventListener("touchend", stopDrag);
           }
-        });
+        }
+
+        function onDrag(e) {
+          if (!isDragging) return;
+
+          if (e.type === "mousemove") {
+            element.style.left = e.clientX - offsetX + "px";
+            element.style.top = e.clientY - offsetY + "px";
+          } else if (e.type === "touchmove") {
+            const touch = e.touches[0];
+            element.style.left = touch.clientX - offsetX + "px";
+            element.style.top = touch.clientY - offsetY + "px";
+          }
+          element.style.bottom = "auto"; // prevent snapping back
+        }
+
+        function stopDrag() {
+          isDragging = false;
+          document.removeEventListener("mousemove", onDrag);
+          document.removeEventListener("mouseup", stopDrag);
+          document.removeEventListener("touchmove", onDrag);
+          document.removeEventListener("touchend", stopDrag);
+        }
+
+        element.addEventListener("mousedown", startDrag);
+        element.addEventListener("touchstart", startDrag);
       }
 
-
-    // Enable drag on sectorTablePanel
+      // Enable drag on sectorTablePanel
       makeDraggable(document.getElementById("sectorTablePanel"));
-*/
+
       let coordLabelColor = "white";
       let coordsVisible = true;
 
