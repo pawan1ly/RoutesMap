@@ -13,6 +13,25 @@
     />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="leaflet.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+document.addEventListener('touchstart', function(event) {
+  if (event.touches.length > 1) {
+    event.preventDefault(); // allow pinch zoom
+  }
+}, { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+  let now = (new Date()).getTime();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault(); // block double-tap zoom
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+</script>
+
     <style>
         body,
         html {
@@ -377,6 +396,7 @@
           font-size: 13px;
           font-family: monospace;
           font-weight: bold;
+          height: auto;
         }
 
         /*----Specific styling CFL_XFL tooltip at the ends of the route------*/
@@ -1163,6 +1183,8 @@
         OBREV: ["250200N", "0551135E"],
         OBVOM: ["241503N", "0515552E"],
         ODKUN: ["242608N", "0544017E"],
+        OMDW: ["245372E", "0550951E"],
+        OOSH: ["242300N", "0563731E"],
         ORBOL: ["245134N", "0542348E"],
         ORKOB: ["245309N", "0562421E"],
         ORLUP: ["260686N", "0523226E"],
@@ -3131,7 +3153,13 @@
           CFL: "RFL / F270 if Dep Doha",
           XFL: "F330 or Below",
           REMARKS:
-            "Destinations OOMS/OOMN/OOSH. <br>FL 330 or below for OOMS/OOMN and FL 230 for OOSH",
+            "Destinations OOMS/OOMN/OOSH. <br>F330 or below for OOMS/OOMN and F230 for OOSH",
+        },
+        "BUNDU-TONVO": {
+          CFL: "RFL / F270 if Dep Doha",
+          XFL: "RFL",
+          REMARKS: 
+            " Available levels over TONVO are F270 and above. <br>Traffic shall cross UKILI F230 or above and GEVIV F270 or above",
         },
         "OMAA,AD-TUMAK": { CFL: "F150", XFL: "RFL" },
         "OMAA,AD-ORMID": {
