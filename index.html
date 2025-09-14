@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Route Display</title>
+
     <!-- Local Leaflet CSS for offline compatibility -->
     <link rel="stylesheet" href="leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <!-- Google font (optional) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
@@ -14,23 +17,22 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="leaflet.js"></script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script>
-document.addEventListener('touchstart', function(event) {
-  if (event.touches.length > 1) {
-    event.preventDefault(); // allow pinch zoom
-  }
-}, { passive: false });
+    <script>
+    document.addEventListener('touchstart', function(event) {
+      if (event.touches.length > 1) {
+        event.preventDefault(); // allow pinch zoom
+      }
+    }, { passive: false });
 
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function(event) {
-  let now = (new Date()).getTime();
-  if (now - lastTouchEnd <= 400) {
-    event.preventDefault(); // block double-tap zoom
-  }
-  lastTouchEnd = now;
-}, { passive: false });
-</script>
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+      let now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 500) {
+        event.preventDefault(); // block double-tap zoom
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+    </script>
 
     <style>
         body,
@@ -38,7 +40,7 @@ document.addEventListener('touchend', function(event) {
           margin: 0;
           padding: 0;
           height: 100%;
-          width: 100%;s
+          width: 100%;
           overflow: hidden;
         }
 
@@ -593,32 +595,17 @@ document.addEventListener('touchend', function(event) {
         return [convertDMSToDecimal(latDMS), convertDMSToDecimal(lonDMS)];
       }
 
-    //------------toggle map layer online----------------------------------------------------------------
-/*
-    const baseMapLayer = L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      {
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19,
-        opacity: 0.6
-      }
-    );
 
-     const baseMapLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-       {
-         opacity: 0.8
-       }
-     );
-*/
+      // --- Base map layer (Esri World Street Map) ---
       const baseMapLayer = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
         {
           attribution: "Tiles © Esri",
           maxZoom: 19,
-          opacity: 0.7, // Adjust transparency here (0 = fully transparent, 1 = opaque)
+          opacity: 0.7, // Adjust transparency here
         }
       );
+
 
       //----------------main map border coordinates--------------------------
       const rawCoords = [
@@ -3434,6 +3421,11 @@ document.addEventListener('touchend', function(event) {
         zoomDelta: 0.3, //  smallest step = 0.1
       }).setView(latlngs[0], 7);
 
+
+// Fix rendering when window size/orientation changes
+window.addEventListener("resize", () => {
+  map.invalidateSize();
+});
       //-------------------------------------
       //let extraLabelMarkers = [];
 
