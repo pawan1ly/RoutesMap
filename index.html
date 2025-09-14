@@ -8,7 +8,7 @@
     <!-- Local Leaflet CSS for offline compatibility -->
     <link rel="stylesheet" href="leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    
+
     <!-- Google font (optional) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
@@ -18,417 +18,425 @@
     <script src="leaflet.js"></script>
 
     <script>
-    document.addEventListener('touchstart', function(event) {
-      if (event.touches.length > 1) {
-        event.preventDefault(); // allow pinch zoom
-      }
-    }, { passive: false });
+      document.addEventListener(
+        "touchstart",
+        function (event) {
+          if (event.touches.length > 1) {
+            event.preventDefault(); // allow pinch zoom
+          }
+        },
+        { passive: false }
+      );
 
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function(event) {
-      let now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 500) {
-        event.preventDefault(); // block double-tap zoom
-      }
-      lastTouchEnd = now;
-    }, { passive: false });
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          let now = new Date().getTime();
+          if (now - lastTouchEnd <= 350) {
+            event.preventDefault(); // block double-tap zoom
+          }
+          lastTouchEnd = now;
+        },
+        { passive: false }
+      );
     </script>
 
     <style>
-        body,
-        html {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          width: 100%;
-          overflow: hidden;
-        }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
 
-        #map {
-          height: 100vh;
-          width: 100vw;
-          background-color: #304652; //#374b57; //screen backgroud
-        }
+      #map {
+        height: 100vh;
+        width: 100vw;
+        background-color: #304652; //#374b57; //screen backgroud
+      }
 
-        /* fixes name labels styling*/
-        .coord-label {
-          background: none !important;
-          border: none !important;
-          box-shadow: none !important;
-          padding: 0 !important;
-          margin: 0 !important;
-          color: white;
-          font-size: 10px;
-          font-family: "Roboto", calibri-light;
-          font-weight: light; /* Thinner font */
-          text-align: center;
-          opacity: 0.5;
-        }
-        .coord-label::before {
-          display: none !important;
-        }
+      /* fixes name labels styling*/
+      .coord-label {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: white;
+        font-size: 10px;
+        font-family: "Roboto", calibri-light;
+        font-weight: light; /* Thinner font */
+        text-align: center;
+        opacity: 0.5;
+      }
+      .coord-label::before {
+        display: none !important;
+      }
 
-        /* airway name labels styling*/
-        .airway-label {
-          background-color: rgba(55, 65, 75, 0.9) !important;
-          //background: transparent !important;
-          border: none !important;
-          padding: 2px !important;
-          margin: 0px !important;
-          box-shadow: none !important;
-          font-size: 12px;
-          //font-family: 'Roboto', calibri-light;
-          font-weight: bold;
-          color: yellow !important;
-          text-shadow: none !important;
-          line-height: 1;
-        }
+      /* airway name labels styling*/
+      .airway-label {
+        background-color: rgba(55, 65, 75, 0.9) !important;
+        //background: transparent !important;
+        border: none !important;
+        padding: 2px !important;
+        margin: 0px !important;
+        box-shadow: none !important;
+        font-size: 12px;
+        //font-family: 'Roboto', calibri-light;
+        font-weight: bold;
+        color: yellow !important;
+        text-shadow: none !important;
+        line-height: 1;
+      }
 
-        /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FF9B9B"; -----------------*/
-          .map-menu-bar {
-            position: fixed;
-            top: 0px;
-            left: 0px;
-            right: 0px;
-            z-index: 3000;
-            display: flex;
-            gap: 3px;
-            padding: 3px;
-            background: rgba(75, 89, 97, 0.9);
-          }
+      /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FF9B9B"; -----------------*/
+      .map-menu-bar {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        z-index: 3000;
+        display: flex;
+        gap: 3px;
+        padding: 3px;
+        background: rgba(75, 89, 97, 0.9);
+      }
 
-          /* ------menu button styling (flat look)----- */
-          .map-btn {
-            padding: 6px 10px;
-            font-size: 12px;
-            color: #FF9B9B;
-            cursor: pointer;
-            height: 28px;
-            width: 97px;
-            min-width: 65px;
-            //background: transparent; /* Remove background */
-            background: rgba(75, 89, 97, 0.5);
-            border: 0.5px solid #607176;
-            //border: none; /* Remove border */
-            border-radius: 14px; /* Remove individual rounding */
-          }
-          .map-btn:hover {
-            background: rgba(90, 104, 112, 0.7);
-          }
-          #toggleRouteTipsBtn {
-            width: 110px;
-          }
-          #toggleRunwaysBtn {
-            color: #B4F59D;
-          }
-          #toggleWaypointsBtn {
-            color: #B4F59D;
-          }
-        /* danger Areas button with submenu */
-        .map-btn-panel {
-          position: relative;
-          display: inline-flex;
-          flex-direction: column;
-        }
-        .areas-checkboxes {
-          display: none;
-          position: absolute;
-          top: 116%;
-          left: 0;
-          width: 87px;
-          background: rgba(198, 202, 200, 0.95);
-          color: #0a3a40;
-          padding: 5px;
-          margin-top: 1px;
-          border-radius: 6px;
-          box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-          font-size: 11px;
-          font-family: sans-serif;
-          z-index: 1002;
-        }
-        .areas-checkboxes label {
-          display: block;
-          margin: 2px 0;
-        }
-        /* Show checkboxes when Areas or Sectors button is active */
-        #areasPanel.active .areas-checkboxes,
-        #sectorPanel.active .sector-checkboxes {
-          display: block;
-        }
-        #clearAreasBtn.map-btn {
-          font-size: 9px;
-          padding: 4px 8px;
-          height: 20px;
-          width:85px;
-          text-allign: center;
-        }
+      /* ------menu button styling (flat look)----- */
+      .map-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        color: #ff9b9b;
+        cursor: pointer;
+        height: 28px;
+        width: 97px;
+        min-width: 65px;
+        //background: transparent; /* Remove background */
+        background: rgba(75, 89, 97, 0.5);
+        border: 0.5px solid #607176;
+        //border: none; /* Remove border */
+        border-radius: 14px; /* Remove individual rounding */
+      }
+      .map-btn:hover {
+        background: rgba(90, 104, 112, 0.7);
+      }
+      #toggleRouteTipsBtn {
+        width: 110px;
+      }
+      #toggleRunwaysBtn {
+        color: #b4f59d;
+      }
+      #toggleWaypointsBtn {
+        color: #b4f59d;
+      }
+      /* danger Areas button with submenu */
+      .map-btn-panel {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+      }
+      .areas-checkboxes {
+        display: none;
+        position: absolute;
+        top: 116%;
+        left: 0;
+        width: 87px;
+        background: rgba(198, 202, 200, 0.95);
+        color: #0a3a40;
+        padding: 5px;
+        margin-top: 1px;
+        border-radius: 6px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+        font-size: 11px;
+        font-family: sans-serif;
+        z-index: 1002;
+      }
+      .areas-checkboxes label {
+        display: block;
+        margin: 2px 0;
+      }
+      /* Show checkboxes when Areas or Sectors button is active */
+      #areasPanel.active .areas-checkboxes,
+      #sectorPanel.active .sector-checkboxes {
+        display: block;
+      }
+      #clearAreasBtn.map-btn {
+        font-size: 9px;
+        padding: 4px 8px;
+        height: 20px;
+        width: 85px;
+        text-allign: center;
+      }
 
-        /* -------Custom sector-checkboxes style-------- */
-        #sectorHeader{
-          width: 100px;
-          height: 28px;
-        }
+      /* -------Custom sector-checkboxes style-------- */
+      #sectorHeader {
+        width: 100px;
+        height: 28px;
+      }
 
-        .sector-checkboxes {
-          display: none;
-          position: absolute;
-          top: 113%;
-          right: 1px;
-          width: 82px;
-          background: rgba(45, 59, 71, 0.8);
-          color: #d3d3d3;
-          padding: 6px;
-          margin-top: 1px;
-          border-radius: 6px;
-          box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
-          font-size: 11px;
-          font-family: sans-serif;
-          z-index: 1002;
-        }
-        .sector-checkboxes label {
-          display: block;
-          margin: 3px 0; /* Slightly more spacing between labels */
-        }
-        .sector-checkboxes hr {
-          margin: 6px 0;
-          border-color: #d3d3d3; /* Match text color for consistency */
-        }
-        /* Ensure sectorPanel is pushed to the far right */
-        #sectorPanel {
-          margin-left: auto;
-        }
+      .sector-checkboxes {
+        display: none;
+        position: absolute;
+        top: 113%;
+        right: 1px;
+        width: 82px;
+        background: rgba(45, 59, 71, 0.8);
+        color: #d3d3d3;
+        padding: 6px;
+        margin-top: 1px;
+        border-radius: 6px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+        font-size: 11px;
+        font-family: sans-serif;
+        z-index: 1002;
+      }
+      .sector-checkboxes label {
+        display: block;
+        margin: 3px 0; /* Slightly more spacing between labels */
+      }
+      .sector-checkboxes hr {
+        margin: 6px 0;
+        border-color: #d3d3d3; /* Match text color for consistency */
+      }
+      /* Ensure sectorPanel is pushed to the far right */
+      #sectorPanel {
+        margin-left: auto;
+      }
 
-        #sectorTablePanel {
-          position: absolute;
-          background: rgba(45, 59, 71, 0.8);
-          //border: 1px solid #666;
-          //padding: 8px;
-          cursor: move; /* draggable look */
-          z-index: 1000;
-        }
+      #sectorTablePanel {
+        position: absolute;
+        background: rgba(45, 59, 71, 0.8);
+        //border: 1px solid #666;
+        //padding: 8px;
+        cursor: move; /* draggable look */
+        z-index: 1000;
+      }
 
-        /*-------------------route pair area styling--------------------*/
-        #routePanel {
-          position: absolute;
-          top: 36px;
-          left: 3px;
-          background: rgba(35, 49, 57, 0.7);
-          //border: 1px solid #ccc; //#999;
-          border-radius: 8px;
-          padding: 8px;
-          width: 150px;
-          max-height: 92%;
-          overflow: hidden;
-          //overflow-y: auto;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-          display: flex;
-          flex-direction: column;
-          z-index: 1000;
-        }
-        #routeList {
-          overflow-y: auto;
-          overflow-x: hidden;
-          padding-right: 6px;
-        }
-        #routeList::-webkit-scrollbar {
-          width: 4px; /* narrower scrollbar */
-        }
-        #routeList::-webkit-scrollbar-thumb {
-          background-color: rgba(200, 200, 200, 0.5); /* thumb color */
-          border-radius: 3px;
-        }
-        #routeList::-webkit-scrollbar-track {
-          background-color: transparent;
-        }
+      /*-------------------route pair area styling--------------------*/
+      #routePanel {
+        position: absolute;
+        top: 36px;
+        left: 3px;
+        background: rgba(35, 49, 57, 0.7);
+        //border: 1px solid #ccc; //#999;
+        border-radius: 8px;
+        padding: 8px;
+        width: 150px;
+        max-height: 92%;
+        overflow: hidden;
+        //overflow-y: auto;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+      #routeList {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 6px;
+      }
+      #routeList::-webkit-scrollbar {
+        width: 4px; /* narrower scrollbar */
+      }
+      #routeList::-webkit-scrollbar-thumb {
+        background-color: rgba(200, 200, 200, 0.5); /* thumb color */
+        border-radius: 3px;
+      }
+      #routeList::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
 
-        /*route pair buttons styling*/
-        #routeList button {
-          display: block;
-          width: 100%;
-          margin-bottom: 5px;
-          padding: 4px;
-          font-size: 10px;
-          border-radius: 12px;
-          border: 0.1px solid grey;
-          background: #405664;
-          color: white;
-          cursor: pointer;
-          transition: transform 0.2s ease;
-          transform-origin: center;
-          will-change: transform;
-        }
-        #routeList button:hover {
-          transform: scale(1.2);
-          background-color: #fbc965;
-          color: black;
-          z-index: 1;
-        }
+      /*route pair buttons styling*/
+      #routeList button {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+        padding: 4px;
+        font-size: 10px;
+        border-radius: 12px;
+        border: 0.1px solid grey;
+        background: #405664;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        transform-origin: center;
+        will-change: transform;
+      }
+      #routeList button:hover {
+        transform: scale(1.2);
+        background-color: #fbc965;
+        color: black;
+        z-index: 1;
+      }
 
-        /*--format route pair button when selected--*/
-        #routeList button.selected-route {
-          background-color: #fbc965;
-          color: black;
-          //font-weight: bold;
-          border: 1px solid black;
-        }
-        #routeFilters {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 8px;
-          background: rgba(0, 0, 0, 0.15);
-          border-bottom: 1px solid #888;
-        }
- 
-        /*--Arr,Dep,Ovf buttons ---------------*/
-        .filter-btn {
-          flex: 1;
-          padding: 4px;
-          margin: 2px;
-          color: #486110;
-          font-size: 12px;
-          border-radius: 8px;
-          border: none;
-          cursor: pointer;
-          background: #bfbfbf;
-        }
+      /*--format route pair button when selected--*/
+      #routeList button.selected-route {
+        background-color: #fbc965;
+        color: black;
+        //font-weight: bold;
+        border: 1px solid black;
+      }
+      #routeFilters {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        background: rgba(0, 0, 0, 0.15);
+        border-bottom: 1px solid #888;
+      }
 
-        .filter-btn.selected {
-          background-color: #fbc965; //orange;
-          color: black; //
-          font-size: 12px;
-          font-weight: bold;
-          border: 1px solid black;
-        }
+      /*--Arr,Dep,Ovf buttons ---------------*/
+      .filter-btn {
+        flex: 1;
+        padding: 4px;
+        margin: 2px;
+        color: #486110;
+        font-size: 12px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #bfbfbf;
+      }
 
-        /*-----------------sector letter in colored area styling big letter---------------------*/
-        .sector-label {
-          background: none !important;
-          border: none !important;
-          box-shadow: none !important;
-          padding: 0 !important;
-          margin: 0 !important;
-          color: rgba(255, 255, 255, 0.4) !important;
-          font-size: 48px !important;
-          font-family: sans-serif !important;
-          font-weight: bold !important;
-          text-align: bottom !important;
-          opacity: 1 !important; /* Ensure container is fully visible; opacity is handled via rgba */
-        }
+      .filter-btn.selected {
+        background-color: #fbc965; //orange;
+        color: black; //
+        font-size: 12px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
 
-        /* ----------------holding pattern tooltip styling----------------*/
-        .leaflet-tooltip.holding-tooltip {
-          background-color: rgba(10, 60, 70, 1);
-          color: yellow;
-          border: 1px solid grey;
-          border-radius: 10px;
-          padding: 6px 10px;
-          font-size: 12px;
-          font-family: Arial, sans-serif;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-        }
+      /*-----------------sector letter in colored area styling big letter---------------------*/
+      .sector-label {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: rgba(255, 255, 255, 0.4) !important;
+        font-size: 48px !important;
+        font-family: sans-serif !important;
+        font-weight: bold !important;
+        text-align: bottom !important;
+        opacity: 1 !important; /* Ensure container is fully visible; opacity is handled via rgba */
+      }
 
-        /* Remove the little arrow ("tip") */
-        .leaflet-tooltip.holding-tooltip::before,
-        .leaflet-tooltip.holding-tooltip::after {
-          display: none !important;
-        }
+      /* ----------------holding pattern tooltip styling----------------*/
+      .leaflet-tooltip.holding-tooltip {
+        background-color: rgba(10, 60, 70, 1);
+        color: yellow;
+        border: 1px solid grey;
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Remove the little arrow ("tip") */
+      .leaflet-tooltip.holding-tooltip::before,
+      .leaflet-tooltip.holding-tooltip::after {
+        display: none !important;
+      }
 
       /* Danger-Area Details tooltip top center*/
-        .area-details-panel {
-          position: absolute;
-          top: 35px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(10, 60, 70, 1);
-          padding: 8px 12px;
-          border-radius: 10px;
-          border: 1px solid grey;
-          font-size: 13px;
-          font-family: Arial, sans-serif;
-          white-space: pre-line; /* Changed from pre-wrap to normal to collapse whitespace */
-          display: none;
-          text-align: left;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-          line-height: 1.5; /* Reduced line-height for tighter spacing */
-          z-index: 2000;
-        }
-        .area-details-panel strong {
-          font-weight: bold;
-        }
-          #areaDetailsPanel::first-line {
-            line-height: 0;   /* tighten the top */
-          }
+      .area-details-panel {
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(10, 60, 70, 1);
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid grey;
+        font-size: 13px;
+        font-family: Arial, sans-serif;
+        white-space: pre-line; /* Changed from pre-wrap to normal to collapse whitespace */
+        display: none;
+        text-align: left;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        line-height: 1.5; /* Reduced line-height for tighter spacing */
+        z-index: 2000;
+      }
+      .area-details-panel strong {
+        font-weight: bold;
+      }
+      #areaDetailsPanel::first-line {
+        line-height: 0; /* tighten the top */
+      }
 
-        /*------------------------ Tooltip container ---------------------------------*/
-        .tooltip-container {
-          position: absolute;
-          bottom: 10px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          flex-direction: column; /* Stack vertically */
-          align-items: center;
-          gap: 3px;
-          pointer-events: auto; /* Allow interaction with tooltips */
-          z-index: 1500;
-        }
+      /*------------------------ Tooltip container ---------------------------------*/
+      .tooltip-container {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column; /* Stack vertically */
+        align-items: center;
+        gap: 3px;
+        pointer-events: auto; /* Allow interaction with tooltips */
+        z-index: 1500;
+      }
 
-        .tooltip {
-          padding: 6px 12px;
-          background: #233139;
-          color: white;
-          font-size: 13px;
-          font-family: monospace; //"Roboto", sans-serif;
-          border-radius: 12px;
-          text-align: center;
-          white-space: nowrap; /* Keep nowrap for single-line tooltips */
-          overflow: hidden;
-          text-overflow: ellipsis;
-          width: auto;
-          height: 14px;
-          max-width: none;
-          display: inline-block; /* Ensure individual width calculation */
-          user-select: text; /* Allow text selection */
-        }
+      .tooltip {
+        padding: 6px 12px;
+        background: #233139;
+        color: white;
+        font-size: 13px;
+        font-family: monospace; //"Roboto", sans-serif;
+        border-radius: 12px;
+        text-align: center;
+        white-space: nowrap; /* Keep nowrap for single-line tooltips */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: auto;
+        height: 14px;
+        max-width: none;
+        display: inline-block; /* Ensure individual width calculation */
+        user-select: text; /* Allow text selection */
+      }
 
-        /*------ Specific styling for route with only waypoints tooltip --------*/
-        #remarksOverlay.tooltip {
-          background: rgba(134, 230, 173, 0.9);
-          color: #013841;
-          font-size: 13px;
-          font-family: monospace;
-          font-weight: bold;
-          height: auto;
-        }
+      /*------ Specific styling for route with only waypoints tooltip --------*/
+      #remarksOverlay.tooltip {
+        background: rgba(134, 230, 173, 0.9);
+        color: #013841;
+        font-size: 13px;
+        font-family: monospace;
+        font-weight: bold;
+        height: auto;
+      }
 
-        /*----Specific styling CFL_XFL tooltip at the ends of the route------*/
-        .leaflet-tooltip.route-extra-label {
-          background-color: rgba(134, 230, 173, 1) !important;
-          color: #013845 !important;
-          padding: 3px 10px;
-          font-weight: bold;
-          font-size: 12px;
-          border: none;
-          border-radius: 11px;
-          position: absolute;
-        }
+      /*----Specific styling CFL_XFL tooltip at the ends of the route------*/
+      .leaflet-tooltip.route-extra-label {
+        background-color: rgba(134, 230, 173, 1) !important;
+        color: #013845 !important;
+        padding: 3px 10px;
+        font-weight: bold;
+        font-size: 12px;
+        border: none;
+        border-radius: 11px;
+        position: absolute;
+      }
 
-        /* Ensure map has relative positioning for absolute children */
-        #map {
-          position: relative;
-          width: 100%;
-          height: 100vh; /* Adjust based on  map height */
-        }
+      /* Ensure map has relative positioning for absolute children */
+      #map {
+        position: relative;
+        width: 100%;
+        height: 100vh; /* Adjust based on  map height */
+      }
 
-        /*add yellow spot at the end of the drawn route line*/
-        .arrow-head {
-          width: 3px;
-          height: 3px;
-          background: url('data:image/svg+xml;utf8,<svg fill="yellow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="75" cy="60" r="30"/></svg>')
-            no-repeat center;
-          background-size: contain;
-          transform-origin: center;
-        }
+      /*add yellow spot at the end of the drawn route line*/
+      .arrow-head {
+        width: 3px;
+        height: 3px;
+        background: url('data:image/svg+xml;utf8,<svg fill="yellow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="75" cy="60" r="30"/></svg>')
+          no-repeat center;
+        background-size: contain;
+        transform-origin: center;
+      }
     </style>
   </head>
   <body>
@@ -579,7 +587,6 @@
     </div>
 
     <script>
-
       function convertDMSToDecimal(dmsStr) {
         const match = dmsStr.match(
           /^(\d{2,3})(\d{2})(\d{2}(?:\.\d+)?)([NSWE])$/
@@ -595,7 +602,6 @@
         return [convertDMSToDecimal(latDMS), convertDMSToDecimal(lonDMS)];
       }
 
-
       // --- Base map layer (Esri World Street Map) ---
       const baseMapLayer = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
@@ -605,7 +611,6 @@
           opacity: 0.7, // Adjust transparency here
         }
       );
-
 
       //----------------main map border coordinates--------------------------
       const rawCoords = [
@@ -648,78 +653,204 @@
 
       //10nm final extended lines ------------
       const runwayCoords = {
-        OMAA_31L: [["242518N", "0544001E"], ["241909N", "0544841E"],],
-        OMAA_31R: [["242632N", "0544012E"], ["242024N", "0544852E"],],
-        OMAA_13L: [["242754N", "0543817E"], ["243403N", "0542938E"],],
-        OMAA_13R: [["242639N", "0543806E"], ["243248N", "0542927E"],],
+        OMAA_31L: [
+          ["242518N", "0544001E"],
+          ["241909N", "0544841E"],
+        ],
+        OMAA_31R: [
+          ["242632N", "0544012E"],
+          ["242024N", "0544852E"],
+        ],
+        OMAA_13L: [
+          ["242754N", "0543817E"],
+          ["243403N", "0542938E"],
+        ],
+        OMAA_13R: [
+          ["242639N", "0543806E"],
+          ["243248N", "0542927E"],
+        ],
 
-        OMAD_31: [["242510N", "0542814E"], ["241900N", "0543651E"],],
-        OMAD_13: [["242614N", "0542644E"], ["243225N", "0541806E"],],
+        OMAD_31: [
+          ["242510N", "0542814E"],
+          ["241900N", "0543651E"],
+        ],
+        OMAD_13: [
+          ["242614N", "0542644E"],
+          ["243225N", "0541806E"],
+        ],
 
-        OMAL_19: [["241647N", "0553642E"], ["242641N", "0553807E"],],
-        OMAL_01: [["241438N", "0553624E"], ["240443N", "0553459E"],],
+        OMAL_19: [
+          ["241647N", "0553642E"],
+          ["242641N", "0553807E"],
+        ],
+        OMAL_01: [
+          ["241438N", "0553624E"],
+          ["240443N", "0553459E"],
+        ],
 
         //"OMAM_13L": [["241530N", "0543200E"], ["242132N", "0542315E"]],
         //"OMAM_13R": [["241427N", "0543212E"], ["242029N", "0542327E"]],
         //"OMAM_31L": [["241315N", "0543355E"], ["240714N", "0544240E"]],
         //"OMAM_31R": [["241418N", "0543343E"], ["240816N", "0544227E"]],
 
-        OMBY_13: [["241729N", "0523416E"], ["242414N", "0522611E"],],
-        OMBY_31: [["241633.46N", "0523522.45E"], ["240948N", "0524327E"],],
+        OMBY_13: [
+          ["241729N", "0523416E"],
+          ["242414N", "0522611E"],
+        ],
+        OMBY_31: [
+          ["241633.46N", "0523522.45E"],
+          ["240948N", "0524327E"],
+        ],
 
-        OMAS_31: [["250802.32N", "0525247.65E"], ["250131N", "0530110E"],],
-        OMAS_13: [["250834N", "0525207E"], ["251504N", "0524344E"],],
+        OMAS_31: [
+          ["250802.32N", "0525247.65E"],
+          ["250131N", "0530110E"],
+        ],
+        OMAS_13: [
+          ["250834N", "0525207E"],
+          ["251504N", "0524344E"],
+        ],
 
-        OMDB_12L: [["251600N", "0552047E"], ["252113N", "0551122E"],],
-        OMDB_12R: [["251522N", "0552129E"], ["252035N", "0551204E"],],
-        OMDB_30L: [["251407N", "0552345E"], ["250853N", "0553310E"],],
-        OMDB_30R: [["251446N", "0552300E"], ["250933N", "0553225E"],],
+        OMDB_12L: [
+          ["251600N", "0552047E"],
+          ["252113N", "0551122E"],
+        ],
+        OMDB_12R: [
+          ["251522N", "0552129E"],
+          ["252035N", "0551204E"],
+        ],
+        OMDB_30L: [
+          ["251407N", "0552345E"],
+          ["250853N", "0553310E"],
+        ],
+        OMDB_30R: [
+          ["251446N", "0552300E"],
+          ["250933N", "0553225E"],
+        ],
 
-        OMDW_30: [["245310N", "0551049E"], ["244757N", "0552012E"],],
-        OMDW_12: [["245426N", "0550831E"], ["245938N", "0545907E"],],
+        OMDW_30: [
+          ["245310N", "0551049E"],
+          ["244757N", "0552012E"],
+        ],
+        OMDW_12: [
+          ["245426N", "0550831E"],
+          ["245938N", "0545907E"],
+        ],
         //"OMDW_31": [["245143N", "0551005E"], ["244631N", "0551929E"]], //1838m
         //"OMDW_13": [["245214N", "0550909E"], ["245726N", "0545944E"]], //1838m
 
-        OMSJ_30: [["251914N", "0553208E"], ["251352N", "0554127E"],],
-        OMSJ_12: [["252025N", "0553006E"], ["252547N", "0552046E"],],
+        OMSJ_30: [
+          ["251914N", "0553208E"],
+          ["251352N", "0554127E"],
+        ],
+        OMSJ_12: [
+          ["252025N", "0553006E"],
+          ["252547N", "0552046E"],
+        ],
 
-        OMRK_16: [["253747N", "0555602E"], ["254726N", "0555308E"],],
-        OMRK_34: [["253549N", "0555638E"], ["252610N", "0555931E"],],
+        OMRK_16: [
+          ["253747N", "0555602E"],
+          ["254726N", "0555308E"],
+        ],
+        OMRK_34: [
+          ["253549N", "0555638E"],
+          ["252610N", "0555931E"],
+        ],
 
-        OMFJ_11: [["250707N", "0561825E"], ["251056N", "0560813E"],],
-        OMFJ_29: [["250620N", "0562029E"], ["250230N", "0563040E"],],
+        OMFJ_11: [
+          ["250707N", "0561825E"],
+          ["251056N", "0560813E"],
+        ],
+        OMFJ_29: [
+          ["250620N", "0562029E"],
+          ["250230N", "0563040E"],
+        ],
         //"OMFJ_11R" :[["250652N", "0561845E"], ["251041N", "0560834E"]],
         //"OMFJ_29L" :[["250614N", "0562026E"], ["250224N", "0563037E"]],
 
-        SIR_12: [["255458N", "0543145E"], ["260054N", "0542248E"],],
-        SIR_30: [["255411N", "0543258E"], ["254815N", "0544154E"],],
+        SIR_12: [
+          ["255458N", "0543145E"],
+          ["260054N", "0542248E"],
+        ],
+        SIR_30: [
+          ["255411N", "0543258E"],
+          ["254815N", "0544154E"],
+        ],
 
-        KIS_27R: [["263136N", "0535957E"], ["263045N", "0541105E"],],
-        KIS_09L: [["263146N", "0535746E"], ["263237N", "0534638E"],],
+        KIS_27R: [
+          ["263136N", "0535957E"],
+          ["263045N", "0541105E"],
+        ],
+        KIS_09L: [
+          ["263146N", "0535746E"],
+          ["263237N", "0534638E"],
+        ],
         //"KIS_27L": [["263126N", "0535957E"], ["263035N", "0541104E"]],
         //"KIS_09R": [["263136N", "0535745E"], ["263227N", "0534637E"]],
 
-        MCT_08R: [["233531N", "0581618E"], ["233439N", "0580526E"],],
-        MCT_26L: [["233542N", "0581824E"], ["233633N", "0582916E"],],
+        MCT_08R: [
+          ["233531N", "0581618E"],
+          ["233439N", "0580526E"],
+        ],
+        MCT_26L: [
+          ["233542N", "0581824E"],
+          ["233633N", "0582916E"],
+        ],
         //"MCT_08L": [["233621N", "0581529E"], ["233528N", "0580437E"]],
         //"MCT_26R": [["233632N", "0581744E"], ["233724N", "0582836E"]],
 
-        OOSH_15: [["242409N", "0563702E"], ["243312N", "0563223E"],],
-        OOSH_33: [["242211N", "0563802E"], ["241308N", "0564241E"],],
+        OOSH_15: [
+          ["242409N", "0563702E"],
+          ["243312N", "0563223E"],
+        ],
+        OOSH_33: [
+          ["242211N", "0563802E"],
+          ["241308N", "0564241E"],
+        ],
 
-        BND_12L: [["271357N", "0562315E"], ["272248N", "0562828E"],],
-        BNE_03R: [["271211N", "0562213E"], ["270320N", "0561701E"],],
+        BND_12L: [
+          ["271357N", "0562315E"],
+          ["272248N", "0562828E"],
+        ],
+        BNE_03R: [
+          ["271211N", "0562213E"],
+          ["270320N", "0561701E"],
+        ],
 
-        QSM_23: [["264601N", "0555507E"], ["265232N", "0560337E"],],
-        QSM_05: [["264432N", "0555310E"], ["263802N", "0554441E"],],
+        QSM_23: [
+          ["264601N", "0555507E"],
+          ["265232N", "0560337E"],
+        ],
+        QSM_05: [
+          ["264432N", "0555310E"],
+          ["263802N", "0554441E"],
+        ],
 
-        DOH_16L: [["251746N", "0513632E"], ["252703N", "0513226E"],],
-        DOH_34R: [["251520N", "0513736E"], ["250603N", "0514142E"],],
-        DOH_16R: [["251728N", "0513523E"], ["252645N", "0513118E"],],
-        DOH_34L: [["251519N", "0513619E"], ["250602N", "0514024E"],],
+        DOH_16L: [
+          ["251746N", "0513632E"],
+          ["252703N", "0513226E"],
+        ],
+        DOH_34R: [
+          ["251520N", "0513736E"],
+          ["250603N", "0514142E"],
+        ],
+        DOH_16R: [
+          ["251728N", "0513523E"],
+          ["252645N", "0513118E"],
+        ],
+        DOH_34L: [
+          ["251519N", "0513619E"],
+          ["250602N", "0514024E"],
+        ],
 
-        BAH_12L: [["261644N", "0503710E"], ["262209N", "0502748E"],],
-        BAH_30R: [["261546N", "0503852E"], ["261021N", "0504814E"],],
+        BAH_12L: [
+          ["261644N", "0503710E"],
+          ["262209N", "0502748E"],
+        ],
+        BAH_30R: [
+          ["261546N", "0503852E"],
+          ["261021N", "0504814E"],
+        ],
       };
 
       //sector coordinates
@@ -941,7 +1072,7 @@
         ["251430.0000N", "0553449.0000E"],
         ["253800.0000N", "0552000.0000E"],
       ];
-/*
+      /*
        const kboxCoords = [
         ["251727.2300N", "0531010.5921E"],
         ["251037.0000N", "0523706.9999E"],
@@ -3145,7 +3276,7 @@
         "BUNDU-TONVO": {
           CFL: "RFL / F270 if Dep Doha",
           XFL: "RFL",
-          REMARKS: 
+          REMARKS:
             " Available levels over TONVO are F270 and above. <br>Traffic shall cross UKILI F230 or above and GEVIV F270 or above",
         },
         "OMAA,AD-TUMAK": { CFL: "F150", XFL: "RFL" },
@@ -3421,7 +3552,7 @@
         zoomDelta: 0.3, //  smallest step = 0.1
       }).setView(latlngs[0], 7);
 
-//-------------------------------------
+      //-------------------------------------
       //let extraLabelMarkers = [];
 
       function expandRoute(routeSeq, airwaysDict) {
@@ -3639,7 +3770,7 @@
 
           if (latlngs.length >= 2) {
             L.polyline(latlngs, {
-              color: "#737373", // "darkcyan",
+              color: "#777777",
               weight: 1.3,
               opacity: 0.5,
               //dashArray: '4 4' // optional: dashed lines
@@ -3787,8 +3918,7 @@
           fillOpacity: 1,
         })
           .bindTooltip(
-            `<b>${pointName}</b> - (${turn})<br>Inbound: ${
-             inboundHeadingDeg}°<br>Outbound: ${outboundHeadingDeg}°<br>
+            `<b>${pointName}</b> - (${turn})<br>Inbound: ${inboundHeadingDeg}°<br>Outbound: ${outboundHeadingDeg}°<br>
              Limit: ${limit || "N/A"}`,
             {
               permanent: true,
@@ -3999,8 +4129,7 @@
                 )
               ) {
                 console.error(
-                  `Invalid coords for polygon area "${
-                    area.shapeName}": must be an array of at least 3 [latDMS, lonDMS] arrays`,
+                  `Invalid coords for polygon area "${area.shapeName}": must be an array of at least 3 [latDMS, lonDMS] arrays`,
                   area
                 );
                 return;
@@ -4022,8 +4151,7 @@
                 area.corner2.length !== 2
               ) {
                 console.error(
-                  `Invalid corner1 or corner2 for rectangle area "${
-                   area.shapeName}": each must be an array [latDMS, lonDMS]`,
+                  `Invalid corner1 or corner2 for rectangle area "${area.shapeName}": each must be an array [latDMS, lonDMS]`,
                   area
                 );
                 return;
@@ -4135,7 +4263,7 @@
       const sectorPanelOffset = { x: -118, y: 5 };
       // Change these values to move panel around (e.g., {x:20, y:10})
 
-      toggleTableBtn.addEventListener("click", function() {
+      toggleTableBtn.addEventListener("click", function () {
         if (
           sectorTablePanel.style.display === "none" ||
           sectorTablePanel.style.display === ""
@@ -4148,7 +4276,7 @@
             rect.bottom + window.scrollY + sectorPanelOffset.y + "px";
 
           sectorTablePanel.style.display = "block";
-          this.textContent = "Sector Info ▼"; 
+          this.textContent = "Sector Info ▼";
         } else {
           sectorTablePanel.style.display = "none";
           this.textContent = "Sector Info ▸";
@@ -4207,7 +4335,7 @@
       // Enable drag on sectorTablePanel
       makeDraggable(document.getElementById("sectorTablePanel"));
 
-      let coordLabelColor = "#C0C0C0";
+      let coordLabelColor = "#A1A1A1";
       let coordsVisible = true;
 
       Object.entries(extraPoints).forEach(([name, [latDMS, lonDMS]]) => {
@@ -4510,15 +4638,33 @@
           }
         });
 
-         //----------pan fly animation of map ------------------
-          if (latlngs.length > 1) {
-            const bounds = L.latLngBounds(latlngs);
-            map.flyToBounds(bounds, {
-              padding: [100, 100],
-              maxZoom: 8.5,
-              duration: 0.4,      // seconds for pan/zoom
-              easeLinearity: 0.15 // optional: smoother easing
-            });
+        //----------pan fly animation of map ------------------
+        if (latlngs.length > 1) {
+          const bounds = L.latLngBounds(latlngs);
+
+          // --- Calculate orientation ---
+          const sw = bounds.getSouthWest();
+          const ne = bounds.getNorthEast();
+          const height = Math.abs(ne.lat - sw.lat);
+          const width = Math.abs(ne.lng - sw.lng);
+
+          // --- Dynamic padding ---
+          let padding;
+          if (height > width) {
+            // Route is more vertical → loosen top/bottom padding, tighten left/right
+            padding = [100, 130]; // [horz, vert]
+          } else {
+            // Route is more horizontal → loosen left/right padding, tighten top/bottom
+            padding = [430, 200];
+          }
+
+          map.flyToBounds(bounds, {
+            padding: padding,
+            maxZoom: 9.1,
+            duration: 0.5,
+            easeLinearity: 0.25,
+          });
+
           let started = false;
           const startAnimation = () => {
             if (started) return;
@@ -4574,7 +4720,7 @@
               }
 
               if (combinedSegments.length > 0) {
-               animateSegmentChain(combinedSegments, 0);
+                animateSegmentChain(combinedSegments, 0);
               }
             }, 50); //small delay after pan ends
           };
@@ -4956,7 +5102,7 @@
           .addEventListener("click", function () {
             if (mapLayerVisible) {
               map.removeLayer(baseMapLayer);
-              coordLabelColor = "#C0C0C0";
+              coordLabelColor = "#A1A1A1";
               runwayLayers.forEach((layer) =>
                 layer.setStyle({ color: "#00ADD6" })
               ); //rwy color
