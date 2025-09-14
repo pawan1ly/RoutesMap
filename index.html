@@ -153,7 +153,7 @@
           position: absolute;
           top: 113%;
           right: 1px;
-          width: 85px;
+          width: 82px;
           background: rgba(45, 59, 71, 0.8);
           color: #d3d3d3;
           padding: 6px;
@@ -4407,7 +4407,7 @@
         const routeSteps = routeMap[from][to];
         document.getElementById(
           "routeTooltip"
-        ).textContent = `${routeSteps.join(" → ")}`;
+        ).textContent = `${routeSteps.join(" ")}`;
 
         const sectors = routeSectors[routeKey];
         const sectorText = sectors ? sectors.join(", ") : "—";
@@ -4495,10 +4495,15 @@
           }
         });
 
-        if (latlngs.length > 1) {
-          const bounds = L.latLngBounds(latlngs);
-          map.fitBounds(bounds, { padding: [100, 100], maxZoom: 8.7 });
-
+         //----------pan fly animation of map ------------------
+          if (latlngs.length > 1) {
+            const bounds = L.latLngBounds(latlngs);
+            map.flyToBounds(bounds, {
+              padding: [100, 100],
+              maxZoom: 8.7,
+              duration: 0.4,      // seconds for pan/zoom
+              easeLinearity: 0.15 // optional: smoother easing
+            });
           let started = false;
           const startAnimation = () => {
             if (started) return;
@@ -4554,13 +4559,14 @@
               }
 
               if (combinedSegments.length > 0) {
-                animateSegmentChain(combinedSegments, 0);
+               animateSegmentChain(combinedSegments, 0);
               }
-            }, 150);
+            }, 50); //small delay after pan ends
           };
 
+          // Only run when pan/zoom animation completes
           map.once("moveend", startAnimation);
-          setTimeout(startAnimation, 170);
+          setTimeout(startAnimation, 470); // force start animation after 0.47 second (pan duration + delay + extra)
         }
 
         // Show arrow/circle at last point
