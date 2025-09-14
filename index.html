@@ -3421,12 +3421,7 @@
         zoomDelta: 0.3, //  smallest step = 0.1
       }).setView(latlngs[0], 7);
 
-
-// Fix rendering when window size/orientation changes
-window.addEventListener("resize", () => {
-  map.invalidateSize();
-});
-      //-------------------------------------
+//-------------------------------------
       //let extraLabelMarkers = [];
 
       function expandRoute(routeSeq, airwaysDict) {
