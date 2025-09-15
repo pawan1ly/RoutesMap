@@ -55,7 +55,7 @@
       #map {
         height: 100vh;
         width: 100vw;
-        background-color: #304652; //#374b57; //screen backgroud
+        background-color: #314855; //#374b57; //screen backgroud
       }
 
       /* fixes name labels styling*/
@@ -415,7 +415,7 @@
         color: #013845 !important;
         padding: 3px 10px;
         font-weight: bold;
-        font-size: 11px;
+        font-size: 12px;
         border: none;
         border-radius: 11px;
         position: absolute;
@@ -461,6 +461,7 @@
           >
           <label><input type="checkbox" id="toggleDanger" /> Danger</label>
           <label><input type="checkbox" id="toggleTraining" /> Training</label>
+          <label><input type="checkbox" id="toggleCTA" /> CTA</label>
           <label><input type="checkbox" id="toggleDetails" /> Info</label>
           <button id="clearAreasBtn" class="map-btn">Clear</button>
         </div>
@@ -1073,12 +1074,12 @@
         ["253800.0000N", "0552000.0000E"],
       ];
       /*
-       const kboxCoords = [
-        ["251727.2300N", "0531010.5921E"],
-        ["251037.0000N", "0523706.9999E"],
-        ["252629.4279N", "0524901.1237E"],
-       ];
-*/
+             const kboxCoords = [
+              ["251727.2300N", "0531010.5921E"],
+              ["251037.0000N", "0523706.9999E"],
+              ["252629.4279N", "0524901.1237E"],
+             ];
+      */
 
       const highSectors = ["S", "B", "L", "N", "M", "C"];
       const lowSectors = ["G", "A", "W", "D", "H", "E", "Y", "R"];
@@ -3370,11 +3371,11 @@
 
         //sample of rectangle shape
         /*{shapeName: "Rectangle A3", shapeType: "rectangle",
-            corner1: ["252400N","0562000E"],
-            corner2: ["252500N","0562100E"],
-            limit: "Surface – 8,000ft",
-            type: "Danger"
-          }*/
+                  corner1: ["252400N","0562000E"],
+                  corner2: ["252500N","0562100E"],
+                  limit: "Surface – 8,000ft",
+                  type: "Danger"
+                }*/
       ];
 
       // --- Restricted Category Library -----------------------
@@ -3451,13 +3452,13 @@
       // -Danger Category Library ---
       const dangerAreas = [
         /*{
-          shapeName: "Circle C1",
-          shapeType: "circle",
-          coords: ["251200N","0554000E"],
-          radiusNm: 2,
-          limit: "FL60 – FL120",
-          type: "Temporary"
-        },*/
+                shapeName: "Circle C1",
+                shapeType: "circle",
+                coords: ["251200N","0554000E"],
+                radiusNm: 2,
+                limit: "FL60 – FL120",
+                type: "Temporary"
+              },*/
         {
           shapeName: "OMD_22 Sea_Range_Charlie",
           shapeType: "polygon",
@@ -3514,6 +3515,304 @@
           ],
           limit: "13,000ft AMSL - 6,000ft AMSL",
           type: "Civil Training Flights, Activity notified by UAE ACC,\n When active: Controlled by UAE ACC, Contact: 120.525 Mhz",
+        },
+      ];
+      const ctaAreas = [
+        {
+          shapeName: "OMAA_CTA_CENTRAL",
+          shapeType: "polygon",
+          coords: [
+            /*["245302N", "0545358E"], //K-KUTLI COMBINED CTA
+            ["244702N", "0550556E"],
+            ["244520N", "0550450E"],
+            ["244011N", "0550137E"],
+            ["243827N", "0550147E"],
+            ["243420N", "0550452E"],
+            ["243050N", "0550920E"],
+            ["243030N", "0551000E"],
+            ["242803N", "0552300E"],
+            ["241630N", "0552129E"],
+            ["235019N", "0551800E"],
+            ["240000N", "0550000E"],
+            ["241930N", "0543100E"],
+            ["241805N", "0542246E"],
+            ["242424N", "0540828E"],
+            ["242800N", "0535500E"],
+            ["243500N", "0535500E"],
+            ["244536N", "0540032E"],
+            ["245800N", "0541200E"],
+            ["245700N", "0542446E"],
+            ["245500N", "0545000E"],*/
+
+            ["241805N", "0542246E"],
+            ["242541N", "0542730E"],
+            ["242506N", "0543726E"],
+            ["243629N", "0544349E"],
+            ["244203N", "0544656E"],
+            ["245302N", "0545358E"],
+            ["244702N", "0550556E"],
+            ["244520N", "0550450E"],
+            ["244011N", "0550137E"],
+            ["243827N", "0550147E"],
+            ["243420N", "0550452E"],
+            ["243050N", "0550920E"],
+            ["243030N", "0551000E"],
+            ["242803N", "0552300E"],
+            ["241630N", "0552129E"],
+            ["235019N", "0551800E"],
+            ["240000N", "0550000E"],
+            ["241930N", "0543100E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMAA_CTA_WEST",
+          shapeType: "polygon",
+          coords: [
+            ["242800N", "0535500E"],
+            ["243500N", "0535500E"],
+            ["244536N", "0540032E"],
+            ["245800N", "0541200E"],
+            ["245700N", "0542446E"],
+            ["245500N", "0545000E"],
+            ["245302N", "0545358E"],
+            ["244203N", "0544656E"],
+            ["243629N", "0544349E"],
+            ["242506N", "0543726E"],
+            ["242541N", "0542730E"],
+            ["241805N", "0542246E"],
+            ["242424N", "0540828E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMAA_CTA_NORTH",
+          shapeType: "polygon",
+          coords: [
+            ["245302N", "0545358E"],
+            ["244702N", "0550556E"],
+            ["244520N", "0550450E"],
+            ["244011N", "0550137E"],
+            ["243827N", "0550147E"],
+            ["243420N", "0550452E"],
+            ["243050N", "0550920E"],
+            ["243030N", "0551000E"],
+            ["242803N", "0552300E"],
+            ["241630N", "0552129E"],
+            ["242046N", "0550523E"],
+            ["243741N", "0544209E"],
+            ["244256N", "0544403E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMAA_CTA_EAST", //OMAL AREA
+          shapeType: "polygon",
+          coords: [
+            ["243500N", "0552700E"],
+            ["243500N", "0555000E"],
+            ["243500N", "0560000E"],
+            ["243028N", "0560525E"],
+            ["240000N", "0553500E"],
+            ["234428N", "0553023E"],
+            ["234730N", "0552312E"],
+            ["235019N", "0551800E"],
+            ["241630N", "0552129E"],
+            ["242803N", "0552300E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_I",
+          shapeType: "polygon",
+          coords: [
+            ["255500N", "0553805E"],
+            ["252800N", "0554500E"],
+            ["251900N", "0555300E"],
+            ["245335N", "0554442E"],
+            ["250040N", "0553830E"],
+            ["250600N", "0552750E"],
+            ["250600N", "0551840E"],
+            ["250255N", "0551150E"],
+            ["250414N", "0545501E"],
+            ["250605N", "0545140E"],
+            ["250805N", "0543133E"],
+            ["252024N", "0543212E"],
+            ["252814N", "0543904E"],
+            ["252659N", "0544348E"],
+            ["252355N", "0545522E"],
+            ["254135N", "0550842E"],
+            ["253800N", "0552000E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_II",
+          shapeType: "polygon",
+          coords: [
+            ["252000N", "0560600E"],
+            ["250812N", "0555918E"],
+            ["250141N", "0555700E"],
+            ["244730N", "0555927E"],
+            ["244730N", "0555700E"],
+            ["244730N", "0555000E"],
+            ["245335N", "0554442E"],
+            ["251900N", "0555300E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_III",
+          shapeType: "polygon",
+          coords: [
+            ["251014N", "0560656E"],
+            ["245420N", "0560308E"],
+            ["244730N", "0560130E"],
+            ["244618N", "0555939E"],
+            ["244730N", "0555927E"],
+            ["250141N", "0555700E"],
+            ["250812N", "0555918E"],
+            ["251014N", "0560656E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_IV",
+          shapeType: "polygon",
+          coords: [
+            ["252800N", "0554500E"],
+            ["252300N", "0561000E"],
+            ["252000N", "0560600E"],
+            ["251900N", "0555300E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_V",
+          shapeType: "polygon",
+          coords: [
+            ["250805N", "0543133E"],
+            ["250605N", "0545140E"],
+            ["250414N", "0545501E"],
+            ["250255N", "0551150E"],
+            ["245925N", "0551153E"],
+            ["245630N", "0551155E"],
+            ["244702N", "0550556E"],
+            ["245302N", "0545358E"],
+            ["245500N", "0545000E"],
+            ["245700N", "0542446E"],
+            ["250713N", "0543130E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_VI",
+          shapeType: "polygon",
+          coords: [
+            ["245925N", "0551153E"],
+            ["244909N", "0553023E"],
+            ["244657N", "0553222E"],
+            ["244302N", "0553221E"],
+            ["243641N", "0552807E"],
+            ["243500N", "0552700E"],
+            ["243453N", "0552421E"],
+            ["244030N", "0551430E"],
+            ["244520N", "0550450E"],
+            ["244702N", "0550556E"],
+            ["245630N", "0551155E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_VII",
+          shapeType: "polygon",
+          coords: [
+            ["245335N", "0554442E"],
+            ["244730N", "0555000E"],
+            ["244438N", "0555000E"],
+            ["244001N", "0555000E"],
+            ["243500N", "0555000E"],
+            ["243500N", "0552700E"],
+            ["243641N", "0552807E"],
+            ["244302N", "0553221E"],
+            ["244657N", "0553222E"],
+            ["244909N", "0553023E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_VIII",
+          shapeType: "polygon",
+          coords: [
+            ["250600N", "0552750E"],
+            ["250040N", "0553830E"],
+            ["245335N", "0554442E"],
+            ["244909N", "0553023E"],
+            ["245925N", "0551153E"],
+            ["250255N", "0551150E"],
+            ["250600N", "0551840E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_IX",
+          shapeType: "polygon",
+          coords: [
+            ["244730N", "0555700E"],
+            ["244438N", "0555000E"],
+            ["244730N", "0555000E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_X",
+          shapeType: "polygon",
+          coords: [
+            ["254135N", "0550842E"],
+            ["252355N", "0545522E"],
+            ["252659N", "0544348E"],
+            ["254453N", "0545818E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_XI",
+          shapeType: "polygon",
+          coords: [
+            ["244618N", "0555939E"],
+            ["244001N", "0555000E"],
+            ["244438N", "0555000E"],
+            ["244730N", "0555700E"],
+            ["244730N", "0555927E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
+        },
+        {
+          shapeName: "OMDB_CTA_XII",
+          shapeType: "polygon",
+          coords: [
+            ["252000N", "0560600E"],
+            ["252300N", "0561000E"],
+            ["251014N", "0560656E"],
+            ["250812N", "0555918E"],
+          ],
+          limit: "TBD",
+          type: "TBD",
         },
       ];
 
@@ -3919,7 +4218,7 @@
         })
           .bindTooltip(
             `<b>${pointName}</b> - (${turn})<br>Inbound: ${inboundHeadingDeg}°<br>Outbound: ${outboundHeadingDeg}°<br>
-             Limit: ${limit || "N/A"}`,
+                   Limit: ${limit || "N/A"}`,
             {
               permanent: true,
               direction: "top",
@@ -3943,10 +4242,10 @@
           iconSize: [16, 16],
           iconAnchor: [8, 8],
           html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                 width="16" height="16"
-                 style="transform: rotate(${arrowRotation}deg); fill: yellow;">
-             <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
-           </svg>`,
+                       width="16" height="16"
+                       style="transform: rotate(${arrowRotation}deg); fill: yellow;">
+                   <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                 </svg>`,
         });
 
         // --- Arrow on inbound leg ---
@@ -3962,10 +4261,10 @@
           iconSize: [16, 16],
           iconAnchor: [8, 8],
           html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                 width="16" height="16"
-                 style="transform: rotate(${inboundRotation}deg); fill: yellow;">
-             <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
-           </svg>`,
+                       width="16" height="16"
+                       style="transform: rotate(${inboundRotation}deg); fill: yellow;">
+                   <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                 </svg>`,
         });
 
         const inboundArrowMarker = L.marker(inboundMidPoint, {
@@ -4000,6 +4299,7 @@
           document.getElementById("toggleRestricted"),
           document.getElementById("toggleDanger"),
           document.getElementById("toggleTraining"),
+          document.getElementById("toggleCTA"),
           document.getElementById("toggleDetails"),
         ];
         checkboxes.forEach((checkbox) => {
@@ -4011,6 +4311,7 @@
         if (restricted) map.removeLayer(restricted);
         if (danger) map.removeLayer(danger);
         if (training) map.removeLayer(training);
+        if (CTA) map.removeLayer(CTA);
 
         // Hide the areaDetailsPanel if it’s visible
         const areaDetailsPanel = document.getElementById("areaDetailsPanel");
@@ -4061,6 +4362,7 @@
       const restricted = L.layerGroup();
       const danger = L.layerGroup();
       const training = L.layerGroup();
+      const CTA = L.layerGroup();
 
       let areaTooltip = null; // Global variable to track the area tooltip
 
@@ -4117,6 +4419,8 @@
                 radius: nmToMeters(area.radiusNm),
                 color,
                 weight: 1, // Reduced thickness
+                fill: true,
+                fillOpacity: 0.05,
               }).addTo(layerGroup);
               break;
 
@@ -4137,9 +4441,12 @@
               const latlngs = area.coords.map(([lat, lon]) =>
                 dmsToLatLng(lat, lon)
               );
-              shape = L.polygon(latlngs, { color, weight: 1 }).addTo(
-                layerGroup
-              );
+              shape = L.polygon(latlngs, {
+                color,
+                weight: 1,
+                fill: true,
+                fillOpacity: 0.05,
+              }).addTo(layerGroup);
               center = shape.getBounds().getCenter();
               break;
 
@@ -4161,6 +4468,8 @@
               shape = L.rectangle([corner1, corner2], {
                 color,
                 weight: 1,
+                fill: true,
+                fillOpacity: 0.05,
               }).addTo(layerGroup);
               center = shape.getBounds().getCenter();
               break;
@@ -4192,7 +4501,8 @@
       renderAreas(prohibitatedAreas, prohibitated, "#FFFF66"); //yellow
       renderAreas(restrictedAreas, restricted, "#FEB476"); //orange
       renderAreas(dangerAreas, danger, "#FFBDFF"); //pink
-      renderAreas(trainingAreas, training, "#BDEEEF");
+      renderAreas(trainingAreas, training, "#BDEEEF"); //light blue
+      renderAreas(ctaAreas, CTA, "#84ACEC"); //light purple
 
       function showAreaDetails(area, color) {
         const detailsCheckbox = document.getElementById("toggleDetails");
@@ -4237,6 +4547,11 @@
           else map.removeLayer(training);
         });
 
+      document.getElementById("toggleCTA").addEventListener("change", (e) => {
+        if (e.target.checked) map.addLayer(CTA);
+        else map.removeLayer(CTA);
+      });
+
       // -----------Function to render sector info table from sectorData---------------------
       function renderSectorTable() {
         const tbody = document.querySelector("#sectorTable tbody");
@@ -4245,10 +4560,10 @@
         sectorData.forEach((row) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-        <td>${row.sector}</td>
-        <td>${row.limit}</td>
-        <td>${row.freq}</td>
-      `;
+              <td>${row.sector}</td>
+              <td>${row.limit}</td>
+              <td>${row.freq}</td>
+            `;
           tbody.appendChild(tr);
         });
       }
@@ -4572,7 +4887,7 @@
               color: color,
               weight: 1.5,
               dashArray: "5 5",
-              opacity: 0.8,
+              opacity: 0.2,
               fill: true,
               fillColor: color,
               fillOpacity: 0.2,
@@ -4655,7 +4970,7 @@
             padding = [100, 130]; // [horz, vert]
           } else {
             // Route is more horizontal → loosen left/right padding, tighten top/bottom
-            padding = [220, 140];
+            padding = [250, 140];
           }
 
           map.flyToBounds(bounds, {
@@ -5004,8 +5319,8 @@
                   weight: 1.5,
                   dashArray: "3 6",
                   fillColor: color,
-                  fillOpacity: 0.2,
-                  opacity: 0.9,
+                  fillOpacity: 0.25,
+                  opacity: 0.3,
                 }).addTo(map);
 
                 // Calculate simple centroid (average of coordinates)
@@ -5056,8 +5371,8 @@
                     weight: 1.5,
                     dashArray: "3 6",
                     fillColor: color,
-                    fillOpacity: 0.2,
-                    opacity: 0.9,
+                    fillOpacity: 0.25,
+                    opacity: 0.3,
                   }).addTo(map);
 
                   // Calculate simple centroid (average of coordinates)
