@@ -3351,6 +3351,7 @@
       ];
 
       // --- Prohibited Category  Library ------------------------
+
       const prohibitatedAreas = [
         {
           shapeName: "OMP_48 Argoob",
@@ -3517,57 +3518,93 @@
           type: "Civil Training Flights, Activity notified by UAE ACC,\n When active: Controlled by UAE ACC, Contact: 120.525 Mhz",
         },
       ];
+
       const ctaAreas = [
         {
-          shapeName: "OMAA_CTA_CENTRAL",
-          shapeType: "polygon",
-          coords: [
-            /*["245302N", "0545358E"], //K-KUTLI COMBINED CTA
-            ["244702N", "0550556E"],
-            ["244520N", "0550450E"],
-            ["244011N", "0550137E"],
-            ["243827N", "0550147E"],
-            ["243420N", "0550452E"],
-            ["243050N", "0550920E"],
-            ["243030N", "0551000E"],
-            ["242803N", "0552300E"],
-            ["241630N", "0552129E"],
-            ["235019N", "0551800E"],
-            ["240000N", "0550000E"],
-            ["241930N", "0543100E"],
-            ["241805N", "0542246E"],
-            ["242424N", "0540828E"],
-            ["242800N", "0535500E"],
-            ["243500N", "0535500E"],
-            ["244536N", "0540032E"],
-            ["245800N", "0541200E"],
-            ["245700N", "0542446E"],
-            ["245500N", "0545000E"],*/
+          shapeName: "OMFJ CTA_I",
+          shapeType: "dynamicShape",
+          closed: true,
+          steps: [
+            // Start point
+            { type: "point", coord: ["253605.65N", "0562151.39E"] },
 
-            ["241805N", "0542246E"],
-            ["242541N", "0542730E"],
-            ["242506N", "0543726E"],
-            ["243629N", "0544349E"],
-            ["244203N", "0544656E"],
-            ["245302N", "0545358E"],
-            ["244702N", "0550556E"],
-            ["244520N", "0550450E"],
-            ["244011N", "0550137E"],
-            ["243827N", "0550147E"],
-            ["243420N", "0550452E"],
-            ["243050N", "0550920E"],
-            ["243030N", "0551000E"],
-            ["242803N", "0552300E"],
-            ["241630N", "0552129E"],
-            ["235019N", "0551800E"],
-            ["240000N", "0550000E"],
-            ["241930N", "0543100E"],
+            { type: "arc", center: ["250600N", "0562103E"], radiusNm: 30,
+            to: ["243644.15N", "0562847.71E"], clockwise: true },
+
+            // Straight lines
+            { type: "line", to: ["250600N", "0562103E"] },
+            { type: "line", to: ["252603.78N", "0562135.23E"] },
+           { type: "line", to: ["253605.65N", "0562151.39E"] },
+  
           ],
-          limit: "TBD",
-          type: "TBD",
+          limit:"9,500 FT AMSL / 1,500 FT AMSL",
+          type:"Class: C",
         },
         {
-          shapeName: "OMAA_CTA_WEST",
+          shapeName: "OMFJ CTA_II",
+          shapeType: "dynamicShape",
+          closed: true,
+          steps: [
+            // Start point
+            { type: "point", coord: ["244606.37N", "0562357.52E"] },
+
+            // Arc clockwise, radius 20NM, centered at ...
+            { type: "arc", center: ["250600N", "0562103E"], radiusNm: 20,
+            to: ["245420.06N", "0560307.82E"], clockwise: true },
+
+            // Straight lines
+            { type: "line", to: ["251014N", "0560656E"] },
+            { type: "line", to: ["252300N", "0561000E"] },
+            { type: "line", to: ["252318.22N", "0560952.37E"] },
+
+            // Second arc clockwise, radius 20NM, same center
+            { type: "arc", center: ["250600N", "0562103E"], radiusNm: 20,
+            to: ["252603.78N", "0562135.23E"], clockwise: true },
+
+            // Lines back to center and start
+            { type: "line", to: ["250600N", "0562103E"] },
+            { type: "line", to: ["244606.37N", "0562357.52E"] }
+          ],
+          limit:"9,500 FT AMSL / 2,000 FT AMSL",
+          type:"Class: C",
+        },
+         {
+          shapeName: "OMAA_RADAR CENTRAL",
+          shapeType: "dynamicShape",
+          closed: true, // polygon closes back to first point
+          steps: [
+           { type: "point", coord: ["241805N", "0542246E"] },
+           { type: "line", to: ["242541N", "0542730E"] },
+           { type: "line", to: ["242506N", "0543726E"] },
+           { type: "line", to: ["243629N", "0544349E"] },
+           { type: "line", to: ["244203N", "0544656E"] },
+           { type: "line", to: ["245302N", "0545358E"] },
+           { type: "line", to: ["244702N", "0550556E"] },
+           { type: "line", to: ["244520N", "0550450E"] },
+           { type: "line", to: ["244011N", "0550137E"] },
+           { type: "line", to: ["243827N", "0550147E"] },
+
+           // First arc (counter-clockwise, 5NM radius)
+           { 
+             type: "arc", center: ["243850N", "0550715E"], radiusNm: 5,
+             //from: ["243827N", "0550147E"], 
+             to: ["243420N", "0550452E"],
+             clockwise: false 
+           },
+           { type: "line", to: ["243050N", "0550920E"] },
+           { type: "line", to: ["243030N", "0551000E"] },
+           { type: "line", to: ["242803N", "0552300E"] },
+           { type: "line", to: ["241630N", "0552129E"] },
+           { type: "line", to: ["235019N", "0551800E"] },
+           { type: "line", to: ["240000N", "0550000E"] },
+           { type: "line", to: ["241930N", "0543100E"] },
+           { type: "line", to: ["241805N", "0542246E"] },
+          ],
+          limit:"FL 155 / 1,500 FT AMSL* Class : C",
+          type:"1,500 FT AMSL / GND Class : G",
+        },
+        {
+          shapeName: "OMAA_RADAR WEST",
           shapeType: "polygon",
           coords: [
             ["242800N", "0535500E"],
@@ -3584,32 +3621,49 @@
             ["241805N", "0542246E"],
             ["242424N", "0540828E"],
           ],
-          limit: "TBD",
-          type: "TBD",
+          limit: "FL 155 / 1,500 FT AMSL* Class : C",
+          type: "1,500 FT AMSL / GND Class : G",
         },
-        {
-          shapeName: "OMAA_CTA_NORTH",
-          shapeType: "polygon",
-          coords: [
-            ["245302N", "0545358E"],
-            ["244702N", "0550556E"],
-            ["244520N", "0550450E"],
-            ["244011N", "0550137E"],
-            ["243827N", "0550147E"],
-            ["243420N", "0550452E"],
-            ["243050N", "0550920E"],
-            ["243030N", "0551000E"],
-            ["242803N", "0552300E"],
-            ["241630N", "0552129E"],
-            ["242046N", "0550523E"],
-            ["243741N", "0544209E"],
-            ["244256N", "0544403E"],
+         {
+          shapeName: "OMAA_RADAR NORTH",
+          shapeType: "dynamicShape",
+          closed: true, // polygon closes back to first point
+          steps: [
+           { type: "point", coord: ["245302N", "0545358E"] },
+           { type: "line", to: ["244702N", "0550556E"] },
+           { type: "line", to: ["244520N", "0550450E"] },
+           { type: "line", to: ["244011N", "0550137E"] },
+           { type: "line", to: ["243827N", "0550147E"] },
+
+           // First arc (counter-clockwise, 5NM radius)
+           { 
+             type: "arc", center: ["243850N", "0550715E"], radiusNm: 5,
+             //from: ["243827N", "0550147E"], 
+             to: ["243420N", "0550452E"], 
+             clockwise: false 
+           },
+           { type: "line", to: ["243050N", "0550920E"] },
+           { type: "line", to: ["243030N", "0551000E"] },
+           { type: "line", to: ["242803N", "0552300E"] },
+           { type: "line", to: ["241630N", "0552129E"] },
+           { type: "line", to: ["242046N", "0550523E"] },
+           { type: "line", to: ["243741N", "0544209E"] },
+         // Second arc (counter-clockwise, 3NM radius)
+           { 
+             type: "arc", 
+             center: ["244041N", "0544152E"], 
+             radiusNm: 3,
+             //from: ["243741N", "0544209E"], 
+             to: ["244256N", "0544403E"], 
+             clockwise: false 
+            },
+            { type: "line", to: ["245302N", "0545358E"] } // closes the polygon
           ],
-          limit: "TBD",
-          type: "TBD",
+          limit:"3,000 FT AMSL / 1,500 FT AMSL Class : C",
+          type:"1,500 FT AMSL / GND Class : G",
         },
         {
-          shapeName: "OMAA_CTA_EAST", //OMAL AREA
+          shapeName: "OMAA_RADAR EAST", //OMAL AREA
           shapeType: "polygon",
           coords: [
             ["243500N", "0552700E"],
@@ -3623,11 +3677,11 @@
             ["241630N", "0552129E"],
             ["242803N", "0552300E"],
           ],
-          limit: "TBD",
-          type: "TBD",
+          limit: "9,500 FT AMSL / 2,000 FT AMSL Class : C",
+          type: "2,000 FT AMSL / GND Class : G",
         },
         {
-          shapeName: "OMDB_CTA_X",
+          shapeName: "OMDB CTA_X",
           shapeType: "polygon",
           coords: [
             ["254135N", "0550842E"],
@@ -3635,8 +3689,24 @@
             ["252659N", "0544348E"],
             ["254453N", "0545818E"],
           ],
-          limit: "TBD",
-          type: "TBD",
+          limit: "8,500 FT AMSL / 1,500 FT AMSL Class: C",
+          type: "1,500 FT AMSL / GND Class: G",
+        },
+        {
+          shapeName: "OMRK CTA",
+          shapeType: "polygon",
+          coords: [
+            ["255800N", "0560000E"],
+            ["252318N", "0560952E"],
+            ["252300N", "0561000E"],
+            ["252000N", "0560600E"],
+            ["251900N", "0555300E"],
+            ["252800N", "0554500E"],
+            ["255500N", "0553805E"],
+            ["255800N", "0560000E"],
+          ],
+          limit: "6,500 FT AMSL / 1,500 FT AMSL",
+          type: "CLASS: C",
         },
       ];
 
@@ -3919,15 +3989,111 @@
         });
       }
 
-      //----------------------Draw holding pattern---------------------------
-      //let holdingLayers = [];
-      //let holdingMarkers = [];
-      //let holdingsVisible = false;
+function expandDynamicShape(shape) {
+  const steps = shape.steps;
+  const result = [];
+  let current = null;
+
+  steps.forEach(step => {
+    if (step.type === "point") {
+      const latlng = dmsToLatLng(step.coord[0], step.coord[1]);
+      current = latlng;
+      result.push(latlng);
+
+    } else if (step.type === "line") {
+      const target = dmsToLatLng(step.to[0], step.to[1]);
+      current = target;
+      result.push(target);
+
+    } else if (step.type === "arc") {
+      const center = dmsToLatLng(step.center[0], step.center[1]);
+      const to = dmsToLatLng(step.to[0], step.to[1]);
+      const arcPts = arcPoints(
+        center[0], center[1],
+        step.radiusNm,
+        current[0], current[1],
+        to[0], to[1],
+        step.clockwise
+      );
+      result.push(...arcPts);
+      current = to;
+    }
+  });
+
+  // if closed polygon, make sure last = first
+  if (shape.closed && result.length > 1) {
+    const first = result[0];
+    const last = result[result.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) {
+      result.push(first);
+    }
+  }
+
+  return result;
+}
+
+
+//----------------------Draw holding pattern---------------------------
 
       function nmToMeters(nm) {
         return nm * 1852;
       }
 
+// --- Utility: Generate arc points between two coordinates
+function arcPoints(centerLat, centerLon, radiusNm, startLat, startLon, endLat, endLon, clockwise = true) {
+  const R = 6371000; // Earth radius in meters
+  const radius = nmToMeters(radiusNm);
+
+  // Convert degrees to radians
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const toDeg = (rad) => (rad * 180) / Math.PI;
+
+  const lat1 = toRad(centerLat);
+  const lon1 = toRad(centerLon);
+
+  // Calculate bearing from center to start/end
+  function bearingTo(lat, lon) {
+    const dLon = toRad(lon - centerLon);
+    const y = Math.sin(dLon) * Math.cos(toRad(lat));
+    const x =
+      Math.cos(lat1) * Math.sin(toRad(lat)) -
+      Math.sin(lat1) * Math.cos(toRad(lat)) * Math.cos(dLon);
+    return (Math.atan2(y, x) * 180) / Math.PI;
+  }
+
+  const startBearing = bearingTo(startLat, startLon);
+  const endBearing = bearingTo(endLat, endLon);
+
+  // Normalize bearings 0–360
+  const normalize = (b) => ((b % 360) + 360) % 360;
+  let start = normalize(startBearing);
+  let end = normalize(endBearing);
+
+  if (clockwise && end < start) end += 360;
+  if (!clockwise && start < end) start += 360;
+
+  const step = 2; // degrees per step (smaller = smoother arc)
+  const latlngs = [];
+
+  for (let b = start; clockwise ? b <= end : b >= end; b += clockwise ? step : -step) {
+    const brad = toRad(b);
+    const lat = Math.asin(
+      Math.sin(lat1) * Math.cos(radius / R) +
+        Math.cos(lat1) * Math.sin(radius / R) * Math.cos(brad)
+    );
+    const lon =
+      lon1 +
+      Math.atan2(
+        Math.sin(brad) * Math.sin(radius / R) * Math.cos(lat1),
+        Math.cos(radius / R) - Math.sin(lat1) * Math.sin(lat)
+      );
+    latlngs.push([toDeg(lat), toDeg(lon)]);
+  }
+
+  return latlngs;
+}
+
+      // draw holding patterns ------------------
       function drawHoldingPattern(
         pointName,
         inboundHeadingDeg,
@@ -4217,110 +4383,92 @@
         });
 
       //draw ares depending upon their physical shapes-circle or polygon or rectangle-------------
-      function renderAreas(areaList, layerGroup, color) {
-        areaList.forEach((area) => {
-          let shape;
-          let center;
+function renderAreas(areaList, layerGroup, color) {
+  areaList.forEach((area) => {
+    let shape;
+    let center;
 
-          switch (area.shapeType) {
-            case "circle":
-              if (!Array.isArray(area.coords) || area.coords.length !== 2) {
-                console.error(
-                  `Invalid coords for circle area "${area.shapeName}": must be an array [latDMS, lonDMS]`,
-                  area
-                );
-                return;
-              }
-              center = dmsToLatLng(...area.coords);
-              if (typeof area.radiusNm !== "number") {
-                console.error(
-                  `Invalid radiusNm for circle area "${area.shapeName}": must be a number`,
-                  area
-                );
-                return;
-              }
-              shape = L.circle(center, {
-                radius: nmToMeters(area.radiusNm),
-                color,
-                weight: 1, // Reduced thickness
-                fill: true,
-                fillOpacity: 0.05,
-              }).addTo(layerGroup);
-              break;
+    switch (area.shapeType) {
+      case "circle":
+        if (!Array.isArray(area.coords) || area.coords.length !== 2) {
+          console.error(`Invalid coords for circle "${area.shapeName}"`);
+          return;
+        }
+        center = dmsToLatLng(...area.coords);
+        shape = L.circle(center, {
+          radius: nmToMeters(area.radiusNm),
+          color,
+          weight: 1,
+          fill: true,
+          fillOpacity: 0.05,
+        }).addTo(layerGroup);
+        break;
 
-            case "polygon":
-              if (
-                !Array.isArray(area.coords) ||
-                area.coords.length < 3 ||
-                !area.coords.every(
-                  (coord) => Array.isArray(coord) && coord.length === 2
-                )
-              ) {
-                console.error(
-                  `Invalid coords for polygon area "${area.shapeName}": must be an array of at least 3 [latDMS, lonDMS] arrays`,
-                  area
-                );
-                return;
-              }
-              const latlngs = area.coords.map(([lat, lon]) =>
-                dmsToLatLng(lat, lon)
-              );
-              shape = L.polygon(latlngs, {
-                color,
-                weight: 1,
-                fill: true,
-                fillOpacity: 0.05,
-              }).addTo(layerGroup);
-              center = shape.getBounds().getCenter();
-              break;
+      case "polygon":
+        if (!Array.isArray(area.coords) || area.coords.length < 3) {
+          console.error(`Invalid coords for polygon "${area.shapeName}"`);
+          return;
+        }
+        const latlngs = area.coords.map(([lat, lon]) => dmsToLatLng(lat, lon));
+        shape = L.polygon(latlngs, {
+          color,
+          weight: 1,
+          fill: true,
+          fillOpacity: 0.05,
+        }).addTo(layerGroup);
+        center = shape.getBounds().getCenter();
+        break;
 
-            case "rectangle":
-              if (
-                !Array.isArray(area.corner1) ||
-                area.corner1.length !== 2 ||
-                !Array.isArray(area.corner2) ||
-                area.corner2.length !== 2
-              ) {
-                console.error(
-                  `Invalid corner1 or corner2 for rectangle area "${area.shapeName}": each must be an array [latDMS, lonDMS]`,
-                  area
-                );
-                return;
-              }
-              const corner1 = dmsToLatLng(...area.corner1);
-              const corner2 = dmsToLatLng(...area.corner2);
-              shape = L.rectangle([corner1, corner2], {
-                color,
-                weight: 1,
-                fill: true,
-                fillOpacity: 0.05,
-              }).addTo(layerGroup);
-              center = shape.getBounds().getCenter();
-              break;
+      case "rectangle":
+        if (!Array.isArray(area.corner1) || !Array.isArray(area.corner2)) {
+          console.error(`Invalid corners for rectangle "${area.shapeName}"`);
+          return;
+        }
+        const corner1 = dmsToLatLng(...area.corner1);
+        const corner2 = dmsToLatLng(...area.corner2);
+        shape = L.rectangle([corner1, corner2], {
+          color,
+          weight: 1,
+          fill: true,
+          fillOpacity: 0.05,
+        }).addTo(layerGroup);
+        center = shape.getBounds().getCenter();
+        break;
 
-            default:
-              console.error(
-                `Unknown shapeType "${area.shapeType}" for area "${area.shapeName}"`,
-                area
-              );
-              return;
-          }
+      case "dynamicShape":
+        const latlngsDyn = expandDynamicShape(area);
+        if (!latlngsDyn || latlngsDyn.length < 2) {
+          console.error(`Invalid dynamicShape "${area.shapeName}"`);
+          return;
+        }
+        shape = area.closed
+          ? L.polygon(latlngsDyn, { color, weight: 1.5, fillOpacity: 0.1 })
+          : L.polyline(latlngsDyn, { color, weight: 1.5 });
+        shape.addTo(layerGroup);
+        center = shape.getBounds().getCenter();
+        break;
 
-          if (center) {
-            // Label
-            L.marker(center, {
-              icon: L.divIcon({
-                className: "area-label",
-                html: `<div style="color:${color}; font-weight:bold;">${area.shapeName}</div>`,
-                iconSize: [0, 0],
-              }),
-            }).addTo(layerGroup);
+      default:
+        console.error(`Unknown shapeType "${area.shapeType}"`);
+        return;
+    }
 
-            // show on Details panel on click
-            shape.on("click", () => showAreaDetails(area, color));
-          }
-        });
-      }
+    if (center) {
+      // Label
+      L.marker(center, {
+        icon: L.divIcon({
+          className: "area-label",
+          html: `<div style="color:${color}; font-weight:bold;">${area.shapeName}</div>`,
+          iconSize: [0, 0],
+        }),
+      }).addTo(layerGroup);
+
+      // Tooltip/details on click
+      shape.on("click", () => showAreaDetails(area, color));
+    }
+  });
+}
+
 
       renderAreas(prohibitatedAreas, prohibitated, "#FFFF66"); //yellow
       renderAreas(restrictedAreas, restricted, "#FEB476"); //orange
