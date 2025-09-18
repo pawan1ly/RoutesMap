@@ -55,7 +55,7 @@
       #map {
         height: 100vh;
         width: 100vw;
-        background-color: #314855; //#374b57; //screen backgroud
+        background-color: #374b57; //screen backgroud
       }
 
       /* fixes name labels styling*/
@@ -78,7 +78,7 @@
 
       /* airway name labels styling*/
       .airway-label {
-        background-color: rgba(55, 65, 75, 0.9) !important;
+        background-color: rgba(65, 75, 85, 0.9) !important;
         //background: transparent !important;
         border: none !important;
         padding: 2px !important;
@@ -215,6 +215,65 @@
         z-index: 1000;
       }
 
+.freq-marker {
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-family: sans-serif;
+  font-size: 10px;
+  z-index: 1000;
+}
+.freq-label {
+  background: none;
+  color: #FFF2CC;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* --- Crosshair --- */
+#crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  pointer-events: none;
+  z-index: 9999;
+}
+#crosshair:before,
+#crosshair:after {
+  content: '';
+  position: absolute;
+  background: rgba(10, 10, 10, 0.5);
+}
+#crosshair:before {
+  left: 9px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+#crosshair:after {
+  top: 9px;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+#centerCoords {
+  background: rgba(55, 65, 75, 0.6);
+  color: white; 	
+  border: none;
+  border-radius : 12px;
+  height:23px;
+  font-size: 12px;
+  position: relative;
+  left: 3px;
+  top:1px;
+}
       /*-------------------route pair area styling--------------------*/
       #routePanel {
         position: absolute;
@@ -441,7 +500,9 @@
   </head>
   <body>
     <!-- Menu bar for buttons -->
-    <div id="map"></div>
+    <div id="map">
+      <div id="crosshair"></div>
+    </div>
     <div id="mapMenuBar" class="map-menu-bar">
       <button id="resetViewBtn" class="map-btn">RTE Clear</button>
       <button id="toggleMapBtn" class="map-btn">Toggle Map</button>
@@ -466,6 +527,10 @@
           <button id="clearAreasBtn" class="map-btn">Clear</button>
         </div>
       </div>
+      <button id="toggleFreqBtn" class="map-btn">Freq: OFF</button>
+
+      <input type="text" id="centerCoords" readonly style="width:220px; text-align:center;" />
+
       <div id="sectorPanel" class="map-btn-panel">
         <div class="sector-info-group">
           <button id="toggleTableBtn" class="map-btn">Sector Info ▸</button>
@@ -3306,6 +3371,14 @@
         { sector: "YANKEE", limit: "A095 - F195", freq: "118.925" },
       ];
 
+// Sector Frequency Library
+const sectFreq = [
+  { frqName: "OMDB WEST", freq: "126.2", condition: "From west", pin: ["253828N", "0550117E"] },
+  { frqName: "OMDB EAST", freq: "125.375", condition: "From east", pin: ["250203N", "0555086E"] },
+  // Add more entries as needed
+];
+
+
       //hold info library --------------------------------
       const holdingLibrary = [
         {
@@ -4523,6 +4596,78 @@ function renderAreas(areaList, layerGroup, color) {
         if (e.target.checked) map.addLayer(CTA);
         else map.removeLayer(CTA);
       });
+
+
+// Layer group for frequency markers
+const freqLayer = L.layerGroup();
+
+// Function to add frequency markers to the map
+function addFreqMarkers() {
+  sectFreq.forEach(freq => {
+    const [lat, lon] = dmsToLatLng(freq.pin[0], freq.pin[1]); // Assuming dmsToLatLng is defined
+    const marker = L.marker([lat, lon], {
+      icon: L.divIcon({
+        className: 'freq-marker',
+        html: `<div class="freq-label">
+          ${freq.frqName}<br>${freq.freq}<br>${freq.condition}
+        </div>`,
+        iconSize: [0,0], // Adjust based on content
+      }),
+    }).addTo(freqLayer);
+  });
+  map.addLayer(freqLayer);
+}
+
+// Function to remove frequency markers from the map
+function removeFreqMarkers() {
+  map.removeLayer(freqLayer);
+}
+
+// Toggle button event listener (add to your existing script)
+document.getElementById("toggleFreqBtn").addEventListener("click", function() {
+  const button = this;
+  if (button.textContent === "Freq: OFF") {
+    addFreqMarkers();
+    button.textContent = "Freq: ON";
+    button.style.color = "#B4F59D"; // ON color
+  } else {
+    removeFreqMarkers();
+    button.textContent = "Freq: OFF";
+    button.style.color = "#FB9B9B"; // OFF color
+  }
+});
+
+
+
+function formatDMS(lat, lon) {
+  function toDMS(deg, latlon) {
+    const abs = Math.abs(deg);
+    const d = Math.floor(abs);
+    const m = Math.floor((abs - d) * 60);
+    const s = ((abs - d - m/60) * 3600).toFixed(2);
+    if (latlon === "lat") {
+      return `${String(d).padStart(2,'0')}${String(m).padStart(2,'0')}${String(s).padStart(5,'0')} ${deg >= 0 ? "N" : "S"}`;
+    } else {
+      return `${String(d).padStart(3,'0')}${String(m).padStart(2,'0')}${String(s).padStart(5,'0')} ${deg >= 0 ? "E" : "W"}`;
+    }
+  }
+  return [
+    `"${toDMS(lat,"lat").replace(" ", "")}"`,
+    `"${toDMS(lon,"lon").replace(" ", "")}"`
+  ];
+}
+
+function updateCenterCoords() {
+  const center = map.getCenter();
+  const [latStr, lonStr] = formatDMS(center.lat, center.lng);
+  document.getElementById("centerCoords").value = `${latStr}, ${lonStr}`;
+}
+
+// Update on move and once at start
+map.on("move", updateCenterCoords);
+updateCenterCoords();
+
+
 
       // -----------Function to render sector info table from sectorData---------------------
       function renderSectorTable() {
