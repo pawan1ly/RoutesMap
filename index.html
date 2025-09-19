@@ -16,6 +16,10 @@
     />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="leaflet.js"></script>
+ 
+<!-- Add these to your <head> or before </body> to include Leaflet.Draw -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
     <script>
       document.addEventListener(
@@ -556,6 +560,7 @@
       <button id="toggleFreqBtn" class="map-btn">Freq: OFF</button>
       <button id="rblToolBtn" class="map-btn">RBL Tool</button>
       <button id="clearRblBtn" class="map-btn">Clear RBLs</button>
+      <button id="scribbleBtn" class="map-btn">Scribble: OFF</button>
 
 
       <div id="sectorPanel" class="map-btn-panel">
@@ -4873,6 +4878,58 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 
+//scribble -------------------
+// Add this after your map is initialized
+const drawnItems = L.featureGroup().addTo(map);
+
+const drawControl = new L.Control.Draw({
+  position: 'topleft', // Adjust position if needed
+  draw: {
+    polyline: {
+      shapeOptions: {
+        color: 'red', // Scribble color
+        weight: 5 // Line thickness
+      },
+      allowIntersection: true, // Allow self-intersecting lines
+      repeatMode: false
+    },
+    polygon: false,
+    circle: false,
+    rectangle: false,
+    marker: false,
+    circlemarker: false
+  },
+  edit: {
+    featureGroup: drawnItems
+  }
+});
+
+// Event for when a drawing is created
+map.on('draw:created', function(e) {
+  const type = e.layerType;
+  const layer = e.layer;
+  drawnItems.addLayer(layer);
+});
+
+// Toggle button for scribble mode
+document.getElementById("scribbleBtn").addEventListener("click", function() {
+  const button = this;
+  if (button.textContent === "Scribble: OFF") {
+    map.addControl(drawControl);
+    button.textContent = "Scribble: ON";
+    button.style.color = "#B4F59D"; // ON color (match your existing style)
+  } else {
+    map.removeControl(drawControl);
+    button.textContent = "Scribble: OFF";
+    button.style.color = "#FB9B9B"; // OFF color (match your existing style)
+  }
+});
+
+// Optional: Add a clear button for scribbles if needed (or integrate with existing clearAreasBtn)
+document.getElementById("clearAreasBtn").addEventListener("click", function() {
+  drawnItems.clearLayers();
+  // Add any other clear logic here if needed
+});
 
       // -----------Function to render sector info table from sectorData---------------------
       function renderSectorTable() {
