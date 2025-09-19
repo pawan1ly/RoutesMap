@@ -250,15 +250,22 @@
 }
 
 #centerCoords {
-  background: rgba(55, 65, 75, 0.6);
+  background: rgba(55, 65, 75, 0.9);
+  position: absolute;
+  bottom: 30px;
+  right: 2px;
+  width:180px; 
+  text-align:center;
   color: white; 	
   border: none;
-  border-radius : 12px;
-  height:23px;
+  border-radius: 14px;
+  height: 28px;
+  padding: 3px 8px;
   font-size: 12px;
-  position: relative;
-  left: 3px;
-  top:1px;
+  user-select: text;
+  pointer-events: auto;
+  z-index: 1000;
+
 }
 
 .rbl-tooltip {
@@ -519,7 +526,9 @@
     <!-- Menu bar for buttons -->
     <div id="map">
       <div id="crosshair"></div>
+      <input type="text" id="centerCoords" readonly " />  <!--style="width:180px; text-align:center;-->
     </div>
+
     <div id="mapMenuBar" class="map-menu-bar">
       <button id="resetViewBtn" class="map-btn">RTE Clear</button>
       <button id="toggleMapBtn" class="map-btn">Toggle Map</button>
@@ -547,8 +556,6 @@
       <button id="toggleFreqBtn" class="map-btn">Freq: OFF</button>
       <button id="rblToolBtn" class="map-btn">RBL Tool</button>
       <button id="clearRblBtn" class="map-btn">Clear RBLs</button>
-
-      <input type="text" id="centerCoords" readonly style="width:220px; text-align:center;" />
 
 
       <div id="sectorPanel" class="map-btn-panel">
@@ -580,19 +587,6 @@
       </div>
     </div>
 
-    <div id="areaDetailsPanel" class="area-details-panel">
-      <strong id="areaName">Area</strong>
-      <span id="areaLimit"></span>
-      <span id="areaType"></span>
-    </div>
-
-    <div id="tooltipContainer" class="tooltip-container">
-      <div id="sectorTooltip" class="tooltip">Sectors:</div>
-      <div id="routeTooltip" class="tooltip">Route:</div>
-      <div id="expandedRouteTooltip" class="tooltip">Waypoints:</div>
-      <div id="remarksOverlay" class="tooltip">Remarks:</div>
-    </div>
-
     <!--route filter buttons -->
     <div id="routePanel">
       <div id="routeFilters">
@@ -605,6 +599,21 @@
       </div>
       <div id="routeList"></div>
     </div>
+
+    <div id="tooltipContainer" class="tooltip-container">
+      <div id="sectorTooltip" class="tooltip">Sectors:</div>
+      <div id="routeTooltip" class="tooltip">Route:</div>
+      <div id="expandedRouteTooltip" class="tooltip">Waypoints:</div>
+      <div id="remarksOverlay" class="tooltip">Remarks:</div>
+    </div>
+
+    <div id="areaDetailsPanel" class="area-details-panel">
+      <strong id="areaName">Area</strong>
+      <span id="areaLimit"></span>
+      <span id="areaType"></span>
+    </div>
+
+
 
     <!-- ----Floating Table for sector info------------->
     <div
@@ -4674,6 +4683,10 @@ document.getElementById("toggleFreqBtn").addEventListener("click", function() {
 });
 
 
+//display coordinates of corss hair on the center of the map-----------
+
+const centerCoords = document.getElementById('centerCoords');
+L.DomEvent.disableClickPropagation(centerCoords);
 
 function formatDMS(lat, lon) {
   function toDMS(deg, latlon) {
@@ -4704,8 +4717,7 @@ map.on("move", updateCenterCoords);
 updateCenterCoords();
 
 
-
-// draw rbl line on screen----------------------------
+// draw RBL line on screen----------------------------
 let rblActive = false;
 let rblAnchor = null;
 let rblPreviewLine = null;
