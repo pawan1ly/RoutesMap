@@ -71,12 +71,14 @@
         font-weight: light; /* Thinner font */
         text-align: center;
         opacity: 0.5;
+        position: fixed;
+        z-index: 1 !importand; /* lower than freq-label */
       }
       .coord-label::before {
         display: none !important;
       }
 
-      /* airway name labels styling*/
+      /* airway name labels styling eg, G462*/
       .airway-label {
         background-color: rgba(65, 75, 85, 0.9) !important;
         //background: transparent !important;
@@ -215,22 +217,6 @@
         z-index: 1000;
       }
 
-.freq-marker {
-  background: none;
-  border: none;
-  box-shadow: none;
-  font-family: sans-serif;
-  font-size: 10px;
-  z-index: 1000;
-}
-.freq-label {
-  background: none;
-  color: #FFF2CC;
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-size: 11px;
-  white-space: nowrap;
-}
 
 /* --- Crosshair --- */
 #crosshair {
@@ -274,6 +260,37 @@
   left: 3px;
   top:1px;
 }
+
+.rbl-tooltip {
+  background: rgba(55, 75, 87, 0.7);
+  border: none;
+  color: #FCD78E; //light-orange
+  height: 18px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+.leaflet-tooltip.rbl-tooltip::before,
+.leaflet-tooltip.rbl-tooltip::after {
+   display: none !important;
+  }
+
+.freq-marker {
+  border: none;
+  box-shadow: none;
+  font-family: monospace;
+}
+.freq-label {
+  background: rgba(55, 75, 87, 0.6);
+  color: #FCD78E;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  position: absolute;
+  z-index: 2 !important;  
+}
+
       /*-------------------route pair area styling--------------------*/
       #routePanel {
         position: absolute;
@@ -528,8 +545,11 @@
         </div>
       </div>
       <button id="toggleFreqBtn" class="map-btn">Freq: OFF</button>
+      <button id="rblToolBtn" class="map-btn">RBL Tool</button>
+      <button id="clearRblBtn" class="map-btn">Clear RBLs</button>
 
       <input type="text" id="centerCoords" readonly style="width:220px; text-align:center;" />
+
 
       <div id="sectorPanel" class="map-btn-panel">
         <div class="sector-info-group">
@@ -3373,8 +3393,19 @@
 
 // Sector Frequency Library
 const sectFreq = [
-  { frqName: "OMDB WEST", freq: "126.2", condition: "From west", pin: ["253828N", "0550117E"] },
-  { frqName: "OMDB EAST", freq: "125.375", condition: "From east", pin: ["250203N", "0555086E"] },
+  { frqName: "OMAA-C / 124.4", pin: ["240243.58N", "0550505.46E"] },
+  { frqName: "OMDB W / 124.9", freq: "", condition: "", pin: ["253710.07N", "0545600.46E"] },
+  { frqName: "OMDB E / 124.9", freq: "", condition: "", pin: ["250004.31N", "0554157.58E"] },
+  { frqName: "OMDW/SJ-DPN / 124.675", freq: "", condition: "", pin: ["253400.51N", "0553930.78E"] },
+  { frqName: "OMDW/DM-AMR / 124.025", freq: "", condition: "", pin: ["244831.28N", "0553133.54E"] },
+  { frqName: "OMRK / 118.25", freq: "", condition: "", pin: ["254345.45N", "0555627.66E"] },
+  { frqName: "OMAA-W / 128.1", freq: "", condition: "", pin: ["243553.29N", "0540329.76E"] },
+  { frqName: "OBBB-EH / 132.12", freq: "", condition: "F345 & above", pin: ["260133.67N", "0525120.30E"] },
+  { frqName: "OIIX-5 / 120.3", freq: "", condition: "", pin: ["262103.32N", "0553602.55E"] },
+  { frqName: "OEJD / 120.55", freq: "OEJD / 132.9-MIG", condition: "OEJD / 134.5-PUR", pin: ["224751.34N", "0525542.03E"] },
+  { frqName: "OTDF-TMS / 120.674", freq: "", condition: "", pin: ["251352.50N", "0521308.77E"] },
+  { frqName: "OOMM / 124.7", freq: "", condition: "", pin: ["240031.26N", "0555206.17E"] },
+  { frqName: "OOMM-N / 119.8", freq: "", condition: "", pin: ["251254.53N", "0564035.27E"] },
   // Add more entries as needed
 ];
 
@@ -4603,15 +4634,20 @@ const freqLayer = L.layerGroup();
 
 // Function to add frequency markers to the map
 function addFreqMarkers() {
+freqLayer.clearLayers(); // Clear existing markers before adding new ones
   sectFreq.forEach(freq => {
     const [lat, lon] = dmsToLatLng(freq.pin[0], freq.pin[1]); // Assuming dmsToLatLng is defined
+    let parts = [];
+    if (freq.frqName) parts.push(freq.frqName);
+    if (freq.condition) parts.push(freq.condition);
+    if (freq.freq) parts.push(freq.freq);
+    const html = `<div class="freq-label">${parts.join('<br>')}</div>`;
     const marker = L.marker([lat, lon], {
+      pane: "popupPane",   // puts marker above tooltips
       icon: L.divIcon({
         className: 'freq-marker',
-        html: `<div class="freq-label">
-          ${freq.frqName}<br>${freq.freq}<br>${freq.condition}
-        </div>`,
-        iconSize: [0,0], // Adjust based on content
+        html: html,
+        iconSize: [0, 0], // Adjust based on content
       }),
     }).addTo(freqLayer);
   });
@@ -4666,6 +4702,160 @@ function updateCenterCoords() {
 // Update on move and once at start
 map.on("move", updateCenterCoords);
 updateCenterCoords();
+
+
+
+// draw rbl line on screen----------------------------
+let rblActive = false;
+let rblAnchor = null;
+let rblPreviewLine = null;
+let rblPreviewTooltip = null;
+let rblObjects = []; // store { line, tooltip }
+
+const rblBtn = document.getElementById("rblToolBtn");
+const clearRblBtn = document.getElementById("clearRblBtn"); // <-- new button
+
+rblBtn.addEventListener("click", () => {
+  rblActive = !rblActive;
+  rblAnchor = null;
+
+  // Reset previews
+  if (rblPreviewLine) { map.removeLayer(rblPreviewLine); rblPreviewLine = null; }
+  if (rblPreviewTooltip) { map.removeLayer(rblPreviewTooltip); rblPreviewTooltip = null; }
+
+  rblBtn.style.backgroundColor = rblActive ? "#FBC965" : "";
+  rblBtn.style.color = rblActive ? "black" : "";
+  map._container.style.cursor = rblActive ? "crosshair" : "default";
+});
+
+clearRblBtn.addEventListener("click", () => {
+  rblObjects.forEach(obj => {
+    map.removeLayer(obj.line);
+    map.removeLayer(obj.tooltip);
+  });
+  rblObjects = [];
+});
+
+// --- Click events ---
+// Cancel RBL drawing with right-click before second click
+map.on("contextmenu", (e) => {
+  if (rblActive && rblAnchor && !rblPreviewLine._finalized) {
+    // Remove preview line & tooltip
+    if (rblPreviewLine) {
+      map.removeLayer(rblPreviewLine);
+      rblPreviewLine = null;
+    }
+    if (rblPreviewTooltip) {
+      map.removeLayer(rblPreviewTooltip);
+      rblPreviewTooltip = null;
+    }
+    rblAnchor = null; // reset anchor
+  }
+});
+
+map.on("click", (e) => {
+  if (!rblActive) return;
+
+  if (!rblAnchor) {
+    // First click = set anchor
+    rblAnchor = e.latlng;
+
+// Init preview line + tooltip (tooltip starts at anchor)
+rblPreviewLine = L.polyline([rblAnchor], { color: "white", weight: 1, dashArray: "4 4" }).addTo(map);
+rblPreviewTooltip = L.tooltip({
+  permanent: false,
+  direction: "top",
+  offset: [10, -10],
+  className: "rbl-tooltip"
+})
+.setLatLng(rblAnchor)
+.setContent("—/—")   // placeholder until mouse moves
+.addTo(map);
+
+
+  } else {
+    // Second click = finalize
+    const end = e.latlng;
+    const brg = bearing(rblAnchor.lat, rblAnchor.lng, end.lat, end.lng);
+    const distNm = haversine(rblAnchor.lat, rblAnchor.lng, end.lat, end.lng) / 1852;
+
+    const radial = Math.round(brg).toString().padStart(3, "0");
+    const dme = Math.round(distNm).toString().padStart(3, "0");
+
+    const finalLine = L.polyline([rblAnchor, end], { color: "lime", weight: 1 }).addTo(map);
+    const finalTooltip = L.tooltip({
+      permanent: true,
+      direction: "right",
+      offset: [0, 0],
+      className: "rbl-tooltip"
+    }).setLatLng(end).setContent(`${radial} / ${dme}`).addTo(map);
+
+    // Store pair for later removal
+    rblObjects.push({ line: finalLine, tooltip: finalTooltip });
+
+    // Right click 2 remove rbl line  = remove
+    finalLine.on("mousedown", (evt) => {
+      if (evt.originalEvent.button === 2) {
+        map.removeLayer(finalLine);
+        map.removeLayer(finalTooltip);
+        rblObjects = rblObjects.filter(obj => obj.line !== finalLine);
+      }
+    });
+
+    finalTooltip.on("mousedown", (evt) => {
+      if (evt.originalEvent.button === 1) {
+        map.removeLayer(finalLine);
+        map.removeLayer(finalTooltip);
+        rblObjects = rblObjects.filter(obj => obj.tooltip !== finalTooltip);
+      }
+    });
+
+    // Reset preview
+    if (rblPreviewLine) { map.removeLayer(rblPreviewLine); rblPreviewLine = null; }
+    if (rblPreviewTooltip) { map.removeLayer(rblPreviewTooltip); rblPreviewTooltip = null; }
+
+    rblAnchor = null; // Reset anchor
+  }
+});
+
+// --- Mouse move for preview ---
+map.on("mousemove", (e) => {
+  if (!rblActive || !rblAnchor || !rblPreviewLine) return;
+
+  const latlngs = [rblAnchor, e.latlng];
+  rblPreviewLine.setLatLngs(latlngs);
+
+  const brg = bearing(rblAnchor.lat, rblAnchor.lng, e.latlng.lat, e.latlng.lng);
+  const distNm = haversine(rblAnchor.lat, rblAnchor.lng, e.latlng.lat, e.latlng.lng) / 1852;
+
+  const radial = Math.round(brg).toString().padStart(3, "0");
+  const dme = Math.round(distNm).toString().padStart(3, "0");
+
+  rblPreviewTooltip.setLatLng(e.latlng);
+  rblPreviewTooltip.setContent(`${radial} / ${dme}`);
+});
+
+// --- Helpers ---
+function bearing(lat1, lon1, lat2, lon2) {
+  const toRad = (d) => (d * Math.PI) / 180;
+  const toDeg = (r) => (r * 180) / Math.PI;
+  const dLon = toRad(lon2 - lon1);
+  lat1 = toRad(lat1); lat2 = toRad(lat2);
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000; // m
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  lat1 = toRad(lat1); lat2 = toRad(lat2);
+
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 
 
