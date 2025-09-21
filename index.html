@@ -53,6 +53,11 @@
       }
 
       #map {
+        touch-action: none;
+        -ms-touch-action: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
         height: 100vh;
         width: 100vw;
         background-color: #374b57; //screen backgroud
@@ -94,7 +99,7 @@
         line-height: 1;
       }
 
-      /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FF9B9B"; -----------------*/
+      /* ---------Menu bar styling ------on color- "#B4F59D", off color "#FFA3B2"; -----------------*/
       .map-menu-bar {
         position: fixed;
         top: 0px;
@@ -104,21 +109,21 @@
         display: flex;
         gap: 3px;
         padding: 3px;
-        background: rgba(75, 89, 97, 0.9);
+        background: rgba(75, 89, 97, 0.5);
       }
 
       /* ------menu button styling (flat look)----- */
       .map-btn {
         padding: 6px 10px;
         font-size: 11px;
-        color: #ff9b9b;
+        color: #FFA3B2;
         cursor: pointer;
         height: 28px;
         width: auto;
         min-width: 80px;
         //background: transparent; /* Remove background */
-        background: rgba(75, 89, 97, 0.5);
-        border: 0.5px solid #607176;
+        background: rgba(75, 89, 97, 1);
+        border: 0.5px solid #6A7F71;
         //border: none; /* Remove border */
         border-radius: 14px; /* Remove individual rounding */
       }
@@ -175,7 +180,7 @@
 
       /* -------Custom sector-checkboxes style-------- */
       #sectorHeader {
-        width: 100px;
+        width: 80px;
         height: 28px;
       }
 
@@ -184,7 +189,7 @@
         position: absolute;
         top: 113%;
         right: 1px;
-        width: 82px;
+        width: 62px;
         background: rgba(45, 59, 71, 0.8);
         color: #d3d3d3;
         padding: 6px;
@@ -206,6 +211,7 @@
       /* Ensure sectorPanel is pushed to the far right */
       #sectorPanel {
         margin-left: auto;
+        left: -54px;
       }
 
       #sectorTablePanel {
@@ -275,12 +281,9 @@
   height: 18px;
   padding: 3px 6px;
   border-radius: 8px;
+  box-shadow: none;
   font-size: 11px;
 }
-.leaflet-tooltip.rbl-tooltip::before,
-.leaflet-tooltip.rbl-tooltip::after {
-   display: none !important;
-  }
 
 .freq-marker {
   border: none;
@@ -289,7 +292,7 @@
 }
 .freq-label {
   background: rgba(55, 75, 87, 0.6);
-  color: #FCD78E;
+  color: white; //#FCD78E;
   padding: 3px 8px;
   border-radius: 8px;
   font-size: 11px;
@@ -297,6 +300,53 @@
   position: absolute;
   z-index: 2 !important;  
 }
+
+/*multi point measure line---*/
+.measure-tooltip {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: yellow;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.pen-cursor {
+  cursor: url('pen-cursor.png') 0 16, crosshair; 
+}
+
+/*---------------------tool bar---------------*/
+      .tool-bar {
+        position: fixed;
+        top: 38px;
+        //left: 176px;
+        right: 3px;
+        z-index: 3000;
+        display: flex;
+        flex-direction: column;
+        width:40px;
+        gap: 5px;
+        padding: 6px;
+        background: rgba(75, 89, 97, 0.5);
+        border-radius: 24px;
+      }
+
+      /* ------tool button styling (flat look)----- */
+      .tool-btn {
+        padding: 0px 0px;
+        font-size: 10px;
+        color: #03F7F7;
+        cursor: pointer;
+        height: 40px;
+        width: 40px;
+        //max-width: 40px;
+        background: rgba(75, 89, 97,2);
+        border: 0.5px solid #029494;
+        border-radius: 22px;
+      }
+      .tool-btn:hover {
+        background: rgba(120, 144, 152, 0.7);
+      }
 
       /*-------------------route pair area styling--------------------*/
       #routePanel {
@@ -529,6 +579,16 @@
 
     </div>
 
+<div id ="toolBar" class="tool-bar">
+      <!--<button id="toolsBtn" class ="tool-btn">Tools</button>-->
+      <button id="rblToolBtn" class="tool-btn">RBL Tool</button>
+      <button id="clearRblBtn" class="tool-btn">Clear RBLs</button>
+      <button id="measureBtn" class="tool-btn">Scale</button>
+      <button id="clearMeasuresBtn" class="tool-btn">Clear Scale</button>
+      <button id="penBtn" class="tool-btn">Pen Tool</button>
+      <button id="clearPenBtn" class="tool-btn">Clear Notes</button>
+</div>
+
     <div id="mapMenuBar" class="map-menu-bar">
       <button id="resetViewBtn" class="map-btn">RTE Clear</button>
       <button id="toggleMapBtn" class="map-btn">Toggle Map</button>
@@ -554,12 +614,6 @@
         </div>
       </div>
       <button id="toggleFreqBtn" class="map-btn">Freq: OFF</button>
-      <button id="rblToolBtn" class="map-btn">RBL Tool</button>
-      <button id="clearRblBtn" class="map-btn">Clear RBLs</button>
-      <button id="penBtn" class="map-btn">Pen Tool</button>
-      <button id="clearPenBtn" class="map-btn">Clear Notes</button>
-
-
 
       <div id="sectorPanel" class="map-btn-panel">
         <div class="sector-info-group">
@@ -743,6 +797,7 @@
       let sectorVisible = false;
       let mapLayerVisible = false;
       let currentRouteFilter = "Arr";
+     
 
       //convert coordinates decimal numbers
       const latlngs = rawCoords
@@ -3862,6 +3917,7 @@ const sectFreq = [
         wheelPxPerZoomLevel: 100, // <-- Increase this for smoother zoom
         zoomSnap: 0, //  allow fractional zoom
         zoomDelta: 0.3, //  smallest step = 0.1
+        //doubleClickZoom: false
       }).setView(latlngs[0], 7);
 
       //-------------------------------------
@@ -4452,11 +4508,11 @@ function arcPoints(centerLat, centerLon, radiusNm, startLat, startLon, endLat, e
           if (isVisible) {
             map.removeLayer(layer);
             button.textContent = "RWYs: OFF";
-            button.style.color = "#FF9B9B";
+            button.style.color = "#FFA3B2";
           } else {
             map.addLayer(layer);
             button.textContent = "RWYs: ON";
-            button.style.color = "#B4F59D";
+            button.style.color = "#b4f59d";
           }
         });
       }
@@ -4722,8 +4778,7 @@ function updateCenterCoords() {
 map.on("move", updateCenterCoords);
 updateCenterCoords();
 
-
-// draw RBL line on screen----------------------------
+// -------------------------------draw RBL line on screen----------------------------
 let rblActive = false;
 let rblAnchor = null;
 let rblPreviewLine = null;
@@ -4737,12 +4792,21 @@ rblBtn.addEventListener("click", () => {
   rblActive = !rblActive;
   rblAnchor = null;
 
+  measureActive = false;
+  penActive = false;
+
+  // reset their button styles
+  measureBtn.style.borderColor = "";
+  measureBtn.style.color = "";
+  penBtn.style.borderColor = "";
+  penBtn.style.color = "";
+
   // Reset previews
   if (rblPreviewLine) { map.removeLayer(rblPreviewLine); rblPreviewLine = null; }
   if (rblPreviewTooltip) { map.removeLayer(rblPreviewTooltip); rblPreviewTooltip = null; }
 
-  rblBtn.style.backgroundColor = rblActive ? "#FBC965" : "";
-  rblBtn.style.color = rblActive ? "black" : "";
+  rblBtn.style.borderColor = rblActive ? "#FBC965" : "";
+  rblBtn.style.color = rblActive ? "#FBC965" : "";
   map._container.style.cursor = rblActive ? "crosshair" : "default";
 });
 
@@ -4800,33 +4864,23 @@ rblPreviewTooltip = L.tooltip({
     const radial = Math.round(brg).toString().padStart(3, "0");
     const dme = Math.round(distNm).toString().padStart(3, "0");
 
-    const finalLine = L.polyline([rblAnchor, end], { color: "lime", weight: 1 }).addTo(map);
-    const finalTooltip = L.tooltip({
-      permanent: true,
-      direction: "right",
-      offset: [0, 0],
-      className: "rbl-tooltip"
-    }).setLatLng(end).setContent(`${radial} / ${dme}`).addTo(map);
+
+    const finalLine = L.polyline([rblAnchor, end], { color: "lime", weight: 1.5 }).addTo(map);
+
+// --- place tooltip at 3/4 along the line towards end ---
+const twoThirdLat = (rblAnchor.lat + 3 * end.lat) / 4;
+const twoThirdLng = (rblAnchor.lng + 3 * end.lng) / 4;
+const twoThirdPoint = L.latLng(twoThirdLat, twoThirdLng);
+const finalTooltip = L.tooltip({
+  permanent: true,
+  direction: "top",
+  offset: [0, 0],
+  className: "rbl-tooltip"
+}).setLatLng(twoThirdPoint).setContent(`${radial} / ${dme}`).addTo(map);
+
 
     // Store pair for later removal
     rblObjects.push({ line: finalLine, tooltip: finalTooltip });
-
-    // Right click 2 remove rbl line  = remove
-    finalLine.on("mousedown", (evt) => {
-      if (evt.originalEvent.button === 2) {
-        map.removeLayer(finalLine);
-        map.removeLayer(finalTooltip);
-        rblObjects = rblObjects.filter(obj => obj.line !== finalLine);
-      }
-    });
-
-    finalTooltip.on("mousedown", (evt) => {
-      if (evt.originalEvent.button === 1) {
-        map.removeLayer(finalLine);
-        map.removeLayer(finalTooltip);
-        rblObjects = rblObjects.filter(obj => obj.tooltip !== finalTooltip);
-      }
-    });
 
     // Reset preview
     if (rblPreviewLine) { map.removeLayer(rblPreviewLine); rblPreviewLine = null; }
@@ -4875,44 +4929,244 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-//freeeform drawing-----------------------
+
+//-----------------------Multi point measure line-----------------
+
+let measureActive = false;
+let measurePoints = [];
+let measureLine = null;
+let measureTooltip = null;
+let measurePreview = null;   // dashed preview line
+let allMeasureLayers = [];
+
+function toggleMeasure() {
+  measureActive = !measureActive;
+  map.getContainer().style.cursor = measureActive ? "crosshair" : "";
+  measureBtn.style.borderColor = measureActive ? "#FBC965" : "";
+  measureBtn.style.color = measureActive ? "#FBC965" : "";
+
+  // deactivate others
+  rblActive = false;
+  penActive = false;
+  rblBtn.style.borderColor = "";
+  rblBtn.style.color = "";
+  penBtn.style.borderColor = "";
+  penBtn.style.color = "";
+
+  if (!measureActive) resetMeasure();
+}
+
+function resetMeasure() {
+  if (measureLine) { map.removeLayer(measureLine); measureLine = null; }
+  if (measureTooltip) { map.removeLayer(measureTooltip); measureTooltip = null; }
+  if (measurePreview) { map.removeLayer(measurePreview); measurePreview = null; }
+  measurePoints = [];
+}
+
+function clearAllMeasures() {
+  allMeasureLayers.forEach(obj => {
+    if (obj.line) map.removeLayer(obj.line);
+    if (obj.tooltip) map.removeLayer(obj.tooltip);
+  });
+  allMeasureLayers = [];
+}
+
+map.on("click", (e) => {
+  if (!measureActive) return;
+  const latlng = e.latlng;
+  measurePoints.push(latlng);
+
+  if (!measureLine) {
+    measureLine = L.polyline([latlng], { color: "orange", weight: 1.5 }).addTo(map);
+  } else {
+    measureLine.addLatLng(latlng);
+  }
+
+  // Remove old preview when a point is fixed
+  if (measurePreview) {
+    map.removeLayer(measurePreview);
+    measurePreview = null;
+  }
+
+  updateMeasureTooltip();
+});
+
+// --- Mouse move for preview ---
+map.on("mousemove", (e) => {
+  if (!measureActive || measurePoints.length === 0) return;
+
+  const lastPoint = measurePoints[measurePoints.length - 1];
+  const latlngs = [...measurePoints, e.latlng];
+
+  if (!measurePreview) {
+    measurePreview = L.polyline(latlngs, { color: "white", weight: 1, dashArray: "4 4" }).addTo(map);
+  } else {
+    measurePreview.setLatLngs(latlngs);
+  }
+
+  updateMeasureTooltip(e.latlng); // update tooltip live
+});
+
+function updateMeasureTooltip(previewEnd = null) {
+  // Calculate total distance
+  let totalMeters = 0;
+  const pts = [...measurePoints];
+  if (previewEnd) pts.push(previewEnd);
+
+  for (let i = 1; i < pts.length; i++) {
+    totalMeters += pts[i - 1].distanceTo(pts[i]);
+  }
+  const totalNm = (totalMeters / 1852).toFixed(1);
+
+  // Place tooltip 2/3 along the path instead of halfway
+  const targetDistance = totalMeters * (5 / 6);
+  let traveled = 0;
+  let midPoint = pts[0];
+
+  for (let i = 1; i < pts.length; i++) {
+    const segDist = pts[i - 1].distanceTo(pts[i]);
+    if (traveled + segDist >= targetDistance) {
+      const ratio = (targetDistance - traveled) / segDist;
+      const lat = pts[i - 1].lat + ratio * (pts[i].lat - pts[i - 1].lat);
+      const lng = pts[i - 1].lng + ratio * (pts[i].lng - pts[i - 1].lng);
+      midPoint = L.latLng(lat, lng);
+      break;
+    }
+    traveled += segDist;
+  }
+
+
+  if (!measureTooltip) {
+    measureTooltip = L.tooltip({
+      permanent: true,
+      direction: "top",
+      offset: [0, 0],
+      className: "measure-tooltip"
+    }).setLatLng(midPoint).setContent(`${totalNm} Nm`).addTo(map);
+  } else {
+    measureTooltip.setLatLng(midPoint).setContent(`${totalNm} Nm`);
+  }
+}
+
+// --- Finalize or cancel on right-click ---
+map.on("contextmenu", () => {
+  if (!measureActive) return;
+
+  if (measurePoints.length < 2) {
+    // Cancel if only 1 point clicked
+    resetMeasure();
+    return;
+  }
+
+  finalizeMeasure();
+});
+
+// --- Finalize on double click ---
+map.on("dblclick", () => {
+  if (!measureActive || measurePoints.length < 2) return;
+  finalizeMeasure();
+});
+
+function finalizeMeasure() {
+  if (measureLine && measureTooltip) {
+    // Distance should only be based on confirmed points
+    let totalMeters = 0;
+    for (let i = 1; i < measurePoints.length; i++) {
+      totalMeters += measurePoints[i - 1].distanceTo(measurePoints[i]);
+    }
+    const totalNm = (totalMeters / 1852).toFixed(1);
+
+    // Recompute tooltip position on finalized line only
+    const targetDistance = totalMeters * (5 / 6);
+    let traveled = 0;
+    let midPoint = measurePoints[0];
+
+    for (let i = 1; i < measurePoints.length; i++) {
+      const segDist = measurePoints[i - 1].distanceTo(measurePoints[i]);
+      if (traveled + segDist >= targetDistance) {
+        const ratio = (targetDistance - traveled) / segDist;
+        const lat = measurePoints[i - 1].lat + ratio * (measurePoints[i].lat - measurePoints[i - 1].lat);
+        const lng = measurePoints[i - 1].lng + ratio * (measurePoints[i].lng - measurePoints[i - 1].lng);
+        midPoint = L.latLng(lat, lng);
+        break;
+      }
+      traveled += segDist;
+    }
+
+    measureTooltip.setLatLng(midPoint).setContent(`${totalNm} Nm`);
+
+    allMeasureLayers.push({ line: measureLine, tooltip: measureTooltip });
+  }
+
+  // Reset active drawing
+  measureLine = null;
+  measureTooltip = null;
+  if (measurePreview) { map.removeLayer(measurePreview); measurePreview = null; }
+  measurePoints = [];
+}
+
+
+
+//--------------------freeeform drawing-----------------------
+
 let penActive = false;
 let drawing = false;
 let currentLine = null;
 let allDrawings = [];
 
+map.getContainer().classList.add("pen-cursor");
+
+const penBtn = document.getElementById("penBtn");
+
 function togglePen() {
   penActive = !penActive;
-
   if (penActive) {
-    map.dragging.disable();           // disable map drag
-    map.doubleClickZoom.disable();    // disable dbl zoom
-    map.touchZoom.disable();          // disable pinch zoom
-    map.boxZoom.disable();
-    map.keyboard.disable();
+    map.dragging.disable();
+    map.doubleClickZoom.disable();
     map.getContainer().style.cursor = "crosshair";
+    penBtn.style.borderColor = "#FBC965"; // example active color 
+    penBtn.style.color = "#FBC965"; 
+
+    measureActive = false;
+    rblActive = false;
+    measureBtn.style.borderColor = "";
+    measureBtn.style.color = "";
+    rblBtn.style.borderColor = "";
+    rblBtn.style.color = "";
+
   } else {
     map.dragging.enable();
     map.doubleClickZoom.enable();
-    map.touchZoom.enable();
-    map.boxZoom.enable();
-    map.keyboard.enable();
     map.getContainer().style.cursor = "";
     drawing = false;
     currentLine = null;
+    penBtn.style.borderColor = ""; // revert to original background
+    penBtn.style.color = "";
   }
+
+      map.doubleClickZoom.disable();
 }
+
 
 function clearPen() {
   allDrawings.forEach(layer => map.removeLayer(layer));
   allDrawings = [];
 }
 
-// Mouse drawing
+// Toggle pen tool on wheel button click
+map.getContainer().addEventListener("auxclick", function(e) {
+  if (e.button === 1) { // middle button
+    togglePen();
+    e.preventDefault();
+  }
+});
+
+// pen drawing logic with left mouse button...
 map.on("mousedown", (e) => {
   if (!penActive) return;
+  if (e.originalEvent.button !== 0) return; // left button only
   drawing = true;
-  currentLine = L.polyline([e.latlng], { color: "red", weight: 2 }).addTo(map);
+  currentLine = L.polyline([e.latlng], { color: "red", weight: 1.5 }).addTo(map);
   allDrawings.push(currentLine);
 });
 
@@ -4926,28 +5180,99 @@ map.on("mouseup", () => {
   currentLine = null;
 });
 
-// Touch drawing (iPad)
-map.on("touchstart", (e) => {
-  if (!penActive) return;
-  e.originalEvent.preventDefault(); // stop map move
-  const latlng = e.latlng || map.mouseEventToLatLng(e.originalEvent.touches[0]);
-  drawing = true;
-  currentLine = L.polyline([latlng], { color: "red", weight: 2 }).addTo(map);
-  allDrawings.push(currentLine);
+//------------------------universal eraser on right mouse button hold------------------
+
+let eraserActive = false;
+
+map.getContainer().addEventListener("mousedown", function(e) {
+  if (e.button === 2) { // right mouse button activates eraser
+    eraserActive = true;
+    map.getContainer().style.cursor = "crosshair"; // show eraser cursor
+    e.preventDefault();
+  }
+});
+window.addEventListener("mouseup", function(e) {
+  if (e.button === 2) {
+    eraserActive = false;
+    // Revert cursor based on current active tool
+    if (penActive || measureActive || rblActive) {
+      map.getContainer().style.cursor = "crosshair";
+    } else {
+      map.getContainer().style.cursor = "";
+    }
+    e.preventDefault();
+  }
 });
 
-map.on("touchmove", (e) => {
-  if (!penActive || !drawing || !currentLine) return;
-  e.originalEvent.preventDefault();
-  const latlng = map.mouseEventToLatLng(e.originalEvent.touches[0]);
-  currentLine.addLatLng(latlng);
+map.on("mousemove", (e) => {
+  if (!eraserActive) return;
+
+  const eraseRadius = 10; // pixels radius for erasing
+  const cursorPoint = map.latLngToContainerPoint(e.latlng);
+
+  // Erase pen tool polylines stored in allDrawings array
+  allDrawings = allDrawings.filter(polyline => {
+    const latlngs = polyline.getLatLngs();
+    const close = latlngs.some(latlng => {
+      const pt = map.latLngToContainerPoint(latlng);
+      return pt.distanceTo(cursorPoint) <= eraseRadius;
+    });
+    if (close) {
+      map.removeLayer(polyline);
+      return false;
+    }
+    return true;
+  });
+
+  // Erase measurement tool layers: separate polylines and tooltips in one array
+
+allMeasureLayers = allMeasureLayers.filter(obj => {
+  const line = obj.line;
+  const tooltip = obj.tooltip;
+  let erased = false;
+
+  if (line) {
+    const latlngs = line.getLatLngs();
+    if (latlngs.some(latlng => {
+      const pt = map.latLngToContainerPoint(latlng);
+      return pt.distanceTo(cursorPoint) <= eraseRadius;
+    })) {
+      map.removeLayer(line);
+      if (tooltip) {
+        map.removeLayer(tooltip);
+      }
+      erased = true;
+    }
+  }
+  return !erased;
 });
 
-map.on("touchend", () => {
-  drawing = false;
-  currentLine = null;
-});
+  // Erase RBL tool objects stored as {line, tooltip}
+  const eraseLineAndTooltip = (objectsArray) => {
+    return objectsArray.filter(obj => {
+      const line = obj.line;
+      const tooltip = obj.tooltip;
+      let erased = false;
 
+      if (line) {
+        const latlngs = line.getLatLngs();
+        if (latlngs.some(latlng => {
+          const pt = map.latLngToContainerPoint(latlng);
+          return pt.distanceTo(cursorPoint) <= eraseRadius;
+        })) {
+          map.removeLayer(line);
+          if (tooltip) {
+            map.removeLayer(tooltip);  // This line ensures tooltip is removed
+          }
+          erased = true;
+        }
+      }
+      return !erased;
+    });
+  };
+
+  rblObjects = eraseLineAndTooltip(rblObjects);
+});
 
 
       // -----------Function to render sector info table from sectorData---------------------
@@ -4973,7 +5298,7 @@ map.on("touchend", () => {
       const sectorTablePanel = document.getElementById("sectorTablePanel");
 
       // Configurable offset for panel position (px)
-      const sectorPanelOffset = { x: -118, y: 5 };
+      const sectorPanelOffset = { x: -126, y: 5 };
       // Change these values to move panel around (e.g., {x:20, y:10})
 
       toggleTableBtn.addEventListener("click", function () {
@@ -5177,7 +5502,7 @@ map.on("touchend", () => {
           routeTooltips.forEach((tooltip) => (tooltip.style.display = "none"));
           if (remarksOverlay) remarksOverlay.style.display = "none";
           button.textContent = "RTE Info: OFF";
-          button.style.color = "#FF9B9B"; // Text color for OFF state
+          button.style.color = "#FFA3B2"; // Text color for OFF state
         }
       }
 
@@ -5841,9 +6166,11 @@ map.on("touchend", () => {
             if (holdingsVisible) {
               clearAllHoldings();
               this.textContent = "Holdings ▸";
+              this.style.color = ""; //default
             } else {
               drawAllHoldings();
               this.textContent = "Holdings ▼";
+              this.style.color = "#b4f59d"; 
             }
             holdingsVisible = !holdingsVisible;
           });
@@ -5858,12 +6185,24 @@ map.on("touchend", () => {
             if (areasVisible) {
               areasPanel.classList.remove("active");
               this.textContent = "Areas ▸";
+              //this.style.color = ""; //default
             } else {
               areasPanel.classList.add("active");
               this.textContent = "Areas ▼";
+              //this.style.color = "#b4f59d"; 
             }
             areasVisible = !areasVisible;
           });
+
+
+       /* runwayLayers.forEach((layer) => {
+          if (isVisible) {
+            map.removeLayer(layer);
+            button.textContent = "RWYs: OFF";
+            button.style.color = "#FFA3B2";
+          } else {
+
+*/
 
         document
           .getElementById("clearAreasBtn")
@@ -5885,7 +6224,7 @@ map.on("touchend", () => {
             });
 
             this.textContent = coordsVisible ? "Names: ON" : "Names: OFF";
-            this.style.color = coordsVisible ? "#B4F59D" : "#FF9B9B"; // Changes text color
+            this.style.color = coordsVisible ? "" : "#FFA3B2"; // Changes text color
           });
 
         // High group toggle-------------------
@@ -5916,6 +6255,11 @@ map.on("touchend", () => {
 
       document.getElementById("penBtn").addEventListener("click", togglePen);
       document.getElementById("clearPenBtn").addEventListener("click", clearPen);
+
+document.getElementById("measureBtn").addEventListener("click", toggleMeasure);
+document.getElementById("clearMeasuresBtn").addEventListener("click", clearAllMeasures);
+
+
 
     </script>
   </body>
